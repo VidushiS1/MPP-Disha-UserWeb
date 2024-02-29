@@ -474,7 +474,7 @@ const JobManagerAllCardSection = () => {
             <div className="flex-grow flex justify-center items-center">
               {" "}
               {/* Center */}
-              <Box sx={{ bgcolor: "background.paper" }}>
+              <Box >
                 <Tabs
                   value={value}
                   onChange={handleChange}

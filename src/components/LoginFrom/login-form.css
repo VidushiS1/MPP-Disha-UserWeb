@@ -1,0 +1,102 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.main-login-container{
+    background-image: url("../../assets/bgwtaermark4.png");
+     background-size: contain;
+    background-repeat: no-repeat; 
+    background-position: center center;
+}
+
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+  color: #AC885A !important;
+  border-width: 1px !important;
+  /* border-color: #AC885A !important; */
+}
+.css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+  color: #AC885A !important;
+  width: 100% !important;
+}
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: #AC885A !important;
+  border-width: 1px !important;
+}
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  font-size: 14px !important;
+}
+.css-1q6at85-MuiInputBase-root-MuiOutlinedInput-root{
+   font-size: 14px !important; 
+}
+.css-1x5jdmq{
+  padding: 7.5px 14px !important;
+  font-size: 14px !important;
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 7.5px 14px !important;
+}
+
+.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 7.5px 14px !important;
+  /* border-color: #AC885A !important;
+  border-width: 1px !important; */
+  font-size: 14px !important;
+}
+.css-igs3ac {
+   border-color: #AC885A !important;
+  border-width: 1px !important;
+}
+.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  border-color: #AC885A !important;
+  border-width: 1px !important;
+}
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root {
+  color: #AC885A !important;
+}
+.css-i4bv87-MuiSvgIcon-root {
+  color: #AC885A !important;
+}
+.css-1nrlq1o-MuiFormControl-root {
+  width: 100% !important;
+}
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 6.5px 14px !important;
+}
+
+.css-1o9s3wi-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 6.5px 14px !important;
+}
+.top-img-area img{
+    width: 170px;
+}
+.login-form-layout-main{
+    border-radius: 30px;
+    /* box-shadow: 0 5px 21px #0000001c;  */
+    
+    margin: 25px 50px;
+    padding: 50px;
+    /* background: #99b5e6; */
+}
+.mid-forgot-password-area a{
+    font-size: 14px; 
+    color: #AC885A;
+    font-weight: 500;
+    margin: 0; 
+    text-decoration: none;
+}
+.forgaote-password{
+    text-align: center;
+}
+.singUp-screen-layout{
+    font-size: 14px; 
+    color: #AC885A;
+    font-weight: 700;
+    margin: 0; 
+    text-decoration: none; 
+}
+.top-text-field-area{
+    width: 70%;
+}

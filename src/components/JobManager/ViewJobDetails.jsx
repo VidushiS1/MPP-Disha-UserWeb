@@ -4,6 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../assets/drwerdishaicon2.png";
 import titleImg from "../../assets/newmppimages/title.png";
 import sectorImg from "../../assets/newmppimages/GovernmentKnowMoreicon1.png";
+import agancyImg from "../../assets/newmppimages/corporation.png";
 import eligibilityEducationImg from "../../assets/newmppimages/GovernmentKnowMoreicon2.png";
 import examImg from "../../assets/newmppimages/exam.png";
 import salaryImg from "../../assets/newmppimages/GovernmentKnowMoreicon4.png";
@@ -136,6 +137,16 @@ const ViewJobDetails = () => {
           </div>
 
           <div className="p-8 bg-blue-lightest  rounded-lg shadow-md mb-3.5">
+            <div className="flex items-start mb-4 mx-12">
+              <img src={agancyImg} alt="Image" className="w-8 h-8" />
+              <div className="flex flex-col justify-start ml-4">
+                <h6 className="text-lg font-bold">Agency</h6>
+                <div className={`border-b-2 border-yellow-700 w-14 mt-1`}></div>
+                <h6 className="mt-2 text-sm font-medium text-neutral-600">
+                  {getGovJobsListDataById2?.job_sector}
+                </h6>
+              </div>
+            </div>
             <div className="flex items-start mb-4 mx-12">
               <img src={sectorImg} alt="Image" className="w-8 h-8" />
               <div className="flex flex-col justify-start ml-4">

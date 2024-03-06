@@ -33,6 +33,8 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import {getZoomMeetingListData} from "../../../rtk/features/ZoomApi/getZoomMeetingListDataSlice";
 import {getZoomMeetingDataById} from "../../../rtk/features/ZoomApi/getZoomMeetingDataByIdSlice";
 
+import {getBroadcastListData} from "../../../rtk/features/Broadcast/getBroadcastListDataSlice"
+
 const themeColor = createTheme({
   palette: {
     primary: {
@@ -160,7 +162,7 @@ const BroadcastScheduled = () => {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(getZoomMeetingListData())
+    dispatch(getBroadcastListData())
       .then(() => {
         // This code will be executed after the API call is complete
         setLoading(false);
@@ -172,15 +174,15 @@ const BroadcastScheduled = () => {
       });
   }, []);
 
-  const getZoomMeetingListData2 = useSelector(
-    (state) => state.getZoomMeetingListData?.users?.data
+  const getBroadcastListData2 = useSelector(
+    (state) => state.getBroadcastListData?.users?.data
   );
 
 
 
   useEffect(() => {
-    setFetchData(getZoomMeetingListData2 || []);
-  }, [getZoomMeetingListData2]);
+    setFetchData(getBroadcastListData2 || []);
+  }, [getBroadcastListData2]);
 
   console.log("data", data);
 
@@ -236,7 +238,6 @@ const BroadcastScheduled = () => {
     return data?.slice(startIndex, endIndex);
   };
 
-  console.log("getZoomMeetingListData2", getZoomMeetingListData2);
 
   useEffect(() => {
     let sortedData = [...data];
@@ -328,7 +329,7 @@ const BroadcastScheduled = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-3 gap-4 mt-16 mb-16 ">
-              {getCurrentPageItems().length === 0 ? (
+              {getCurrentPageItems()?.length === 0 ? (
                 <div className="commonfornodata col-span-full flex flex-col items-center justify-center text-center">
                   <img
                     src={ntdImg} // Replace with your vector image URL
@@ -343,9 +344,9 @@ const BroadcastScheduled = () => {
                 getCurrentPageItems().map((item) => (
                   <div
                     className="max-w-sm   shadow-md rounded-md main-card-g-j p-4 mb-1 cursor-pointer w-full"
-                    onClick={() => {
-                      handleOpenDialogBox(item?._id);
-                    }}
+                    // onClick={() => {
+                    //   handleOpenDialogBox(item?._id);
+                    // }}
                   >
                     <div
                       className="right-side-icon-g-s"

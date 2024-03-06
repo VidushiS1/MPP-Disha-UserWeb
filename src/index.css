@@ -373,7 +373,10 @@ background: #f3d6d6;
 }
 .right-side-btn-area-g-j{}
 
-
+.vh70-important {
+    height: 84vh !important;
+  }
+  
 
 /* government-and-drivate-sector-css-end */
 
@@ -452,3 +455,23 @@ background: #f3d6d6;
     background-position: center center;
    }
    
+   .css-1u9des2-indicatorSeparator {
+    -webkit-align-self: stretch;
+    -ms-flex-item-align: stretch;
+    align-self: stretch;
+    width: 1px;
+    background-color: unset !important;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    box-sizing: border-box;
+}
+
+
+.profile-wrapper-dialog{
+    padding: 10px;
+    /* background: #f8fafc; */
+    background: #f6f3ee;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 120px;
+}

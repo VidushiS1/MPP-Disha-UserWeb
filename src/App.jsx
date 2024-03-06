@@ -34,6 +34,9 @@ import ViewJobDetails from "./components/JobManager/ViewJobDetails";
 import ViewPrivateJobDetails from "./components/JobManager/ViewPrivateJobDetails";
 import bgLogo from "./assets/bgwtaermark4.png";
 import AllVideoSessionCard from "./components/VideoSession/AllVideoSessionCard";
+import EditCareerAdvice from "./components/CareerAdvice/EditCareerAdvice";
+import StudentProfile from "./components/FurtherEducation/StudentProfile";
+import SignUp from "./components/LoginFrom/SignUp";
 
 
 function App() {
@@ -59,10 +62,11 @@ function App() {
           <Routes>
             <Route path="/*" element={<PageNotFound />} />
             <Route path="/login" element={<LoginFrom />} />
+            <Route path="/sign-up" element={<SignUp />} />
             <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="/confirm-otp" element={<ConfirmOTP />} />
             <Route path="/confirm-password" element={<ConfirmPassword />} />
-            <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
+            {/* <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
               <Route
                 path="/"
                 element={
@@ -80,7 +84,29 @@ function App() {
                   </>
                 }
               />
+            </Route> */}
+
+            <Route
+              path="/"
+              element={<PrivateRoute isAuthenticated={""} />}
+            >
+              <Route
+                path="/"
+                element={
+                  <>
+                    <div className="h-screen flex flex-col w-full">
+                      <div className="">
+                        <TopNavbar />
+                      </div>
+                      <div className="flex-1 p-7 scrollable-content ">
+                        <StudentProfile />
+                      </div>
+                    </div>
+                  </>
+                }
+              />
             </Route>
+
             <Route
               path="/broadcast-scheduled-all-card"
               element={<PrivateRoute isAuthenticated={""} />}
@@ -201,6 +227,28 @@ function App() {
                 }
               />
             </Route>
+
+            <Route
+              path="/edit-career-advice"
+              element={<PrivateRoute isAuthenticated={""} />}
+            >
+              <Route
+                path="/edit-career-advice"
+                element={
+                  <>
+                    <div className="h-screen flex flex-col w-full">
+                      <div className="">
+                        <TopNavbar />
+                      </div>
+                      <div className="flex-1 p-7 scrollable-content">
+                        <EditCareerAdvice />
+                      </div>
+                    </div>
+                  </>
+                }
+              />
+            </Route>
+
             <Route
               path="/job-manager"
               element={<PrivateRoute isAuthenticated={""} />}

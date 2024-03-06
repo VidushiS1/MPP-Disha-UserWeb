@@ -1,6 +1,6 @@
-const API_URL = "http://13.48.105.9:4000/api/content-manager/"; // Replace this with your actual API URL
-// const API_URL = "http://localhost:5000/api/content-manager/";
-
+// const API_URL = "http://13.48.105.9:4000/api/user/"; 
+// const API_URL = "http://localhost:5000/api/user/";
+const API_URL = "http://16.171.242.205:4000/api/user/"
 
 
 const getTokenFromLocalStorage = () => {

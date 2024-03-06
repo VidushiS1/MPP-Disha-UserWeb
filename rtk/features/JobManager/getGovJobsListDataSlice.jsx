@@ -15,11 +15,23 @@ const getTokenFromLocalStorage = () => {
 
 export const getGovJobsListData = createAsyncThunk(
   "jobmanager/getGovJobsListData",
-  async (ids) => {
+  async ({ getGovtSectorIds, getAgnecyIds }) => {
+    console.log("getGovtSectorIds", getGovtSectorIds);
+    console.log("getAgnecyIds", getAgnecyIds);
     try {
       const sectorObj = {
-        sector_id:   ids
-      }
+        sector_id: getGovtSectorIds,
+      };
+
+      const agencyObj = {
+        agency_id: getAgnecyIds,
+      };
+
+      const allObj = {
+        sector_id: getGovtSectorIds,
+        agency_id: getAgnecyIds,
+      };
+
       const config = {
         headers: {
           Authorization: `Bearer ${getTokenFromLocalStorage()}`,
@@ -29,18 +41,14 @@ export const getGovJobsListData = createAsyncThunk(
 
       let response;
 
-     if(ids?.length) {
-       response = await axios.post(
-        API_URL + "gov-jobs-list",sectorObj,
-        config
-      );
-     }else{
-       response = await axios.post(
-        API_URL + "gov-jobs-list",sectorObj,
-        config
-      );
-     }
-     
+      if (getGovtSectorIds?.length > 0 && getAgnecyIds?.length === 0) {
+        response = await axios.post(API_URL + "get-gov-jobs", sectorObj, config);
+      } else if (getAgnecyIds?.length > 0 && getGovtSectorIds?.length === 0) {
+        response = await axios.post(API_URL + "get-gov-jobs", agencyObj, config);
+      } else {
+        response = await axios.post(API_URL + "get-gov-jobs", allObj, config);
+      }
+
       return response?.data;
     } catch (error) {
       console.error("An error occurred1:", error);
@@ -51,9 +59,11 @@ export const getGovJobsListData = createAsyncThunk(
       toast.error(error?.response?.data?.message, {
         toastId: customId,
       });
+      // throw error; // Rethrow the error to inform Redux of the failure
     }
   }
 );
+
 
 const getGovJobsListDataSlice = createSlice({
   name: "getGovJobsListData",

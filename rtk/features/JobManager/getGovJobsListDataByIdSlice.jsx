@@ -24,7 +24,7 @@ export const getGovJobsListDataById = createAsyncThunk(
         },
       };
       const response = await axios.get(
-        API_URL + `gov-job-view?jobId=${govtid}`,
+        API_URL + `get-gov-job-view?jobId=${govtid}`,
         config
       );
       return response.data;

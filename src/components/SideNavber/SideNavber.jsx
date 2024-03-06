@@ -113,7 +113,7 @@ const SideNavber = () => {
       >
         <img
           src={controlerImg}
-          className={`absolute cursor-pointer -right-3 top-12 w-7 border-blue-lightest
+          className={`absolute cursor-pointer -right-2 top-12 w-7 border-blue-lightest
            border-2 rounded-full  ${open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
         />

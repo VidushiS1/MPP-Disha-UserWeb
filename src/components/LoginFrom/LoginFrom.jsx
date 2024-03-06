@@ -8,85 +8,59 @@ import { Button,CircularProgress,TextField } from "@mui/material";
 import {useSelector , useDispatch} from "react-redux"
 import {loginFormData} from "../../../rtk/features/LoginForm/LoginSlice"
 import { toast } from "react-toastify";
-
 import "./login-form.css";
 import { Link, useNavigate } from "react-router-dom";
 
+
+
+const buttonStyles = {
+  padding: "10px",
+  color: "#FFF",
+  fontSize: "15px",
+  fontStyle: "normal",
+  fontWeight: 600,
+  lineHeight: "normal",
+  borderRadius: "5px",
+  background: "linear-gradient(180deg, #B08C5D 0%, #8D6C45 100%)",
+  textTransform: "capitalize",
+  border: "1px solid #AC885A",
+  width: "50%",
+};
 const LoginFrom = () => {
 const dispatch = useDispatch();
 const customId = "custom-id-yes";
 const Navigate = useNavigate();
 
   const [fromDetail, setFormDetail] = useState({
-    email: "",
+    mobile_no: "",
     password: "",
-    fcm_token:  "wertyuioplkjhgfdsazsxcvbnmmnbgfdsderfghj"
+    fcm_token:  "fdugihjhgydfijlkui0789i"
   });
   console.log("fromDetail", fromDetail);
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const loginDetailsHandler = ({ target: { name, value } }) => {
-    if (name === "email") {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value) {
-            setEmailError("Please enter your email address");
-        } else if (!emailPattern.test(value)) {
-            setEmailError("Please enter a valid email address");
-        } else {
-            setEmailError("");
-        }
 
-        if (!emailError) {
-            setFormDetail((prevDetails) => ({
-                ...prevDetails,
-                [name]: value,
-            }));
-        }
-    }
+const loginDetailsHandler = (e) =>{
+    const {name,value} = e.target;
 
-    if (name === "password") {
-      if (!value) {
-        setPasswordError("Please enter your password");
-      } else {
-        setPasswordError("");
-      }
-    }
-
-    // Update the state for email or password based on the validation
     setFormDetail((prevDetails) => ({
-        ...prevDetails,
-        [name]: value,
-    }));
-};
+      ...prevDetails,
+      [name]: value,
+  }));
+}
 
-  const buttonStyles = {
-    padding: "10px",
-    color: "#FFF",
-    fontSize: "15px",
-    fontStyle: "normal",
-    fontWeight: 600,
-    lineHeight: "normal",
-    borderRadius: "5px",
-    background: "linear-gradient(180deg, #B08C5D 0%, #8D6C45 100%)",
-    textTransform: "capitalize",
-    border: "1px solid #AC885A",
-    width: "50%",
-  };
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if email and password are empty
-    if (!fromDetail.email || !fromDetail.password) {
-      toast.error("Email and password are required", {
+    if (!fromDetail.mobile_no || !fromDetail.password) {
+      toast.error("Mobile Number and password are required", {
         toastId: customId,
       });
       return;
@@ -98,7 +72,7 @@ const Navigate = useNavigate();
       setLoading(true);
       const response = await dispatch(loginFormData(fromDetail));
       console.log("success response", response);
-      if (response.payload?.data?.message === "login successfully.") {
+      if (response.payload?.data?.message === "User login successfully.") {
         toast.success("Login Successful", {
           toastId: customId,
         });
@@ -106,14 +80,13 @@ const Navigate = useNavigate();
       } else {
         console.log("error response", response);
         toast.error(
-          response.payload?.data?.message || "Email or Password Does Not Exist",
+          response.payload?.data?.message || "Mobile Number or Password Does Not Exist",
           {
             toastId: customId,
           }
         );
       }
     } catch (error) {
-      // Handle specific error messages if needed
       toast.error("An error occurred. Please try again.", {
         toastId: customId,
       });
@@ -145,11 +118,11 @@ const Navigate = useNavigate();
                     <div className="mb-3 w-100 flex justify-center items-center">
                       <TextField
                         sx={{ width: "50%" }}
-                        name="email"
-                        type="email"
-                        value={fromDetail.email}
+                        name="mobile_no"
+                        type="text"
+                        value={fromDetail.mobile_no}
                         onChange={loginDetailsHandler}
-                        placeholder="Enter your email"
+                        placeholder="Enter your mobile number"
                       />
                     </div>
                     <div className="mb-1 w-100 flex justify-center items-center">
@@ -206,12 +179,12 @@ const Navigate = useNavigate();
                       </Button>
                     </div>
                     <div className="forgaote-password mb-4">
-                      {/* <div className="mid-forgot-password-area">
-                        <a href="">
+                      <div className="mid-forgot-password-area">
+                        <Link to="/sign-up">
                           You don't have an account yet?{" "}
                           <span className="singUp-screen-layout">Sign Up</span>
-                        </a>
-                      </div> */}
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </form>

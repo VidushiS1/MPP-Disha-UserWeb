@@ -6,18 +6,17 @@ import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { createZoomMeeting } from "../../../rtk/features/ZoomApi/createZoomMeetingSlice";
-import {addCareerAdviceData} from "../../../rtk/features/CareerAdvice/addCareerAdviceDataSlice"
+import {updateCareerAdviceData} from "../../../rtk/features/CareerAdvice/updateCareerAdviceDataSlice"
 import {getCareerAdviceAgendaList} from "../../../rtk/features/CareerAdvice/getCareerAdviceAgendaListSlice"
 import {getSlotTimeDataList} from "../../../rtk/features/CareerAdvice/getSlotTimeDataListSlice"
 import { Key } from "@mui/icons-material";
 
-const AddCareerAdvice = () => {
+const EditCareerAdvice = () => {
   const dispatch = useDispatch();
   const [timeSlotLoading,setTimeSlotLoading] = useState(false);
   const navigate = useNavigate();
   const customId = "custom-id-yes";
   const [loading, setLoading] = useState(false);
-  const [selectedValues, setSelectedValues] = useState([]);
   const selectRef = useRef(null);
 
 
@@ -42,14 +41,22 @@ const AddCareerAdvice = () => {
     return student_id || "";
   };
 
+  const careerAdviceData = useSelector(
+    (state) => state.getCareerAdviceRequestById?.users?.data?.[0]
+  );
 
+  const [selectedValues, setSelectedValues] = useState(careerAdviceData?.title || []);
+
+
+  console.log("careerAdviceData",careerAdviceData);
 
   const [careerAdviceForm, setcareerAdviceForm] = useState({
-    student_id: getStudentIdFromLocalStorage(),
-    title: [],
-    description: "",
-    schedule_date: "",
-    schedule_from_time: "",
+    student_id:careerAdviceData?.student_id || getStudentIdFromLocalStorage() ,
+    title:careerAdviceData?.title || [],
+    description: careerAdviceData?.description || "",
+    schedule_date: careerAdviceData?.schedule_date || "",
+    schedule_from_time:careerAdviceData?.schedule_from_time || "",
+    schedul_id:careerAdviceData?._id
   });
 
   const handleChange = (e) => {
@@ -95,11 +102,15 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    flatpickr(datePickerRef.current, {
+    const flatpickrInstance = flatpickr(datePickerRef.current, {
       dateFormat: "Y/m/d",
       minDate: "today",
       onChange: handleChangeDate,
     });
+  
+    if (careerAdviceForm?.schedule_date) {
+      flatpickrInstance.setDate(careerAdviceForm?.schedule_date, true, "Y/m/d");
+    }
   }, []);
 
 
@@ -129,7 +140,7 @@ useEffect(() => {
     
   const requiredField = ["student_id", "title", "schedule_date","schedule_from_time"];
 
-  const SaveZoomData = async (e) => {
+  const SaveEditedCareerAdviceData = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
@@ -151,7 +162,7 @@ useEffect(() => {
  
 
       const actionResult = await dispatch(
-        addCareerAdviceData(careerAdviceForm)
+        updateCareerAdviceData(careerAdviceForm)
       );
       if (actionResult?.payload?.message) {
         setLoading(false);
@@ -169,7 +180,7 @@ useEffect(() => {
   return (
     <>
       <div className="flex items-center justify-between pb-12 ">
-        <h1 className="text-2xl font-semibold">Add Career Advice</h1>
+        <h1 className="text-2xl font-semibold">Edit Career Advice</h1>
         <div className="relative"></div>
       </div>
 
@@ -187,34 +198,38 @@ useEffect(() => {
                   </label>
                   
 
-{agendaData?.length === 0 ? <p>No Agenda List Found...</p> :  agendaData?.map((item, index) => {
-        return (
-          <div className="mt-1" key={index}>
-            <div className="flex items-start mt-2">
-              <div className="flex items-center h-5">
-                <input
-                  id={`checkbox-${index}`}
-                  type="checkbox"
-                  className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 accent-yellow-dark mt-1"
-                  required
-                  name="title"
-                  value={item?.agenda}
-                  onChange={handleChangeTitel}
-                />
-              </div>
-              <label
-                htmlFor={`checkbox-${index}`}
-                className="ms-2 text-sm text-gray-500 font-medium leading-6"
-              >
-                {index + 1}. {item?.agenda}
-              </label>
-            </div>
+                  {agendaData?.length === 0 ? (
+  <p>No Agenda List Found...</p>
+) : (
+  agendaData?.map((item, index) => {
+    const isSelected = selectedValues?.includes(item?.agenda); // Check if the item's agenda is in selectedValues
+    return (
+      <div className="mt-1" key={index}>
+        <div className="flex items-start mt-2">
+          <div className="flex items-center h-5">
+            <input
+              id={`checkbox-${index}`}
+              type="checkbox"
+              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 accent-yellow-dark mt-1"
+              required
+              name="title"
+              value={item?.agenda}
+              onChange={handleChangeTitel}
+              checked={isSelected} // Set the checked state based on isSelected
+            />
           </div>
-        );
-      })}
+          <label
+            htmlFor={`checkbox-${index}`}
+            className="ms-2 text-sm text-gray-500 font-medium leading-6"
+          >
+            {index + 1}. {item?.agenda}
+          </label>
+        </div>
+      </div>
+    );
+  })
+)}
 
-
-                 
                 </div>
                 
               </div>
@@ -322,7 +337,7 @@ useEffect(() => {
               <button
                 className="bg-yellow-dark hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded border border-yellow-dark"
                 disabled={loading}
-                onClick={SaveZoomData}
+                onClick={SaveEditedCareerAdviceData}
               >
                 {loading ? <div className="text-white">Saving...</div> : "Save"}
               </button>
@@ -334,4 +349,4 @@ useEffect(() => {
   );
 };
 
-export default AddCareerAdvice;
+export default EditCareerAdvice;

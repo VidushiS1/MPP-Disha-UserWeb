@@ -32,12 +32,7 @@ export const getPrivateJobsListData = createAsyncThunk(
 
       if(ids?.length){
         response =  await axios.post(
-          API_URL + "pvt-jobs-list",sectorObj,
-          config
-        );
-      }else{
-        response = await axios.post(
-          API_URL + "pvt-jobs-list",sectorObj,
+          API_URL + "get-pvt-jobs",sectorObj,
           config
         );
       }

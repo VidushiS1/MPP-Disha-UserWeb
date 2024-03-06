@@ -15,7 +15,7 @@ const getTokenFromLocalStorage = () => {
 
 export const getStateScholarshipListData = createAsyncThunk(
   "studentprofile/getStateScholarshipListData",
-  async (id) => {
+  async ({selectedValueState,selectedCatState}) => {
     try {
       const config = {
         headers: {
@@ -23,9 +23,11 @@ export const getStateScholarshipListData = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      let url = API_URL + "scholarship-list-state";
-      if (id) {
-        url += `?catId=${id}`;
+      let url = API_URL + "scholarship-list";
+      if (selectedCatState) {
+        url += `?catId=${selectedCatState}`;
+      }else if(selectedValueState){
+        url += `?mp_police=${selectedValueState}`
       }
       const response = await axios.get(url, config);
       

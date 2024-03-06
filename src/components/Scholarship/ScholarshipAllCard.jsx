@@ -186,6 +186,10 @@ const ScholarshipAllCard = () => {
   const [anchorElPrevSector, setAnchorElUserPrevSector] = React.useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCat,setSelectedCat] = useState("");
+  const [selectedValue,setSelectedValue] = useState("");
+  const [selectedCatState,setSelectedCatState] = useState("");
+  const [selectedValueState,setSelectedValueState] = useState("");
 
 
 
@@ -193,25 +197,36 @@ const ScholarshipAllCard = () => {
     dispatch(getCategoryList());
     }, []);
 
+
+    const getCategoryList2 = useSelector(
+      (state) => state.getCategoryList?.users?.data
+    );
+
+    console.log("getCategoryList2",getCategoryList2);
+
+    const allCategoryIds = getCategoryList2?.map((item)=> item?._id)
+    console.log("allCategoryIds",allCategoryIds);
+
     useEffect(() => {
       setLoading(true);
-      dispatch(getNationalScholarshipListData()).then(()=>{
+      dispatch(getNationalScholarshipListData({selectedValue,selectedCat})).then(()=>{
         setLoading(false);
       }).catch((error)=>{
         setLoading(false);
         console.error("Error fetching national scholarship data:", error);
       })
-    }, []);
+    }, [selectedValue,selectedCat]);
+    
 
     useEffect(() => {
       setIsLoading(true);
-      dispatch(getStateScholarshipListData()).then(()=>{
+      dispatch(getStateScholarshipListData({selectedValueState,selectedCatState})).then(()=>{
         setIsLoading(false);
       }).catch((error)=>{
         setIsLoading(false);
         console.error("Error fetching state scholarship data:", error);
       })
-    }, []);
+    }, [selectedValueState,selectedCatState]);
 
 
 
@@ -219,17 +234,22 @@ const ScholarshipAllCard = () => {
       (state) => state.getNationalScholarshipListData?.users?.data
     );
 
+    const filterNationalData = getNationalScholarshipListData2?.filter((item)=>item?.level === "National");
+
+console.log("filterNationalData",filterNationalData);
+
     const getStateScholarshipListData2 = useSelector(
       (state) => state.getStateScholarshipListData?.users?.data
     );
 
-    const getCategoryList2 = useSelector(
-      (state) => state.getCategoryList?.users?.data
-    );
+    const filterStateData = getStateScholarshipListData2?.filter((item)=>item?.level === "State");
+
+    console.log("filterStateData",filterStateData);
+
 
     useEffect(() => {
-      setNationalScholarshipListData(getNationalScholarshipListData2 || []);
-      setStateScholarshipListData(getStateScholarshipListData2 || []);
+      setNationalScholarshipListData(filterNationalData || []);
+      setStateScholarshipListData(filterStateData || []);
   }, [getStateScholarshipListData2,getNationalScholarshipListData2]);
 
 
@@ -402,9 +422,68 @@ const ScholarshipAllCard = () => {
   }finally{
  setIsLoading(false); 
   }
-
 };
-   
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const handleTextFieldClick = () => {
+    if(selectedValue === ""){
+      setSelectedValue('mp_police');
+      setSelectedCat('');
+    }else{
+      setSelectedValue("");
+      setSelectedCat('');
+    }
+  };
+
+  const handleChangeCategory = (e) => {
+    setSelectedCat(e.target.value);
+    setSelectedValue('');
+  };
+
+
+
+  const handleTextFieldClickState = () => {
+    if(selectedValueState === ""){
+      setSelectedValueState('mp_police');
+      setSelectedCatState('');
+    }else{
+      setSelectedValueState("");
+      setSelectedCatState('');
+    }
+  };
+
+  const handleChangeCategoryState = (e) => {
+    setSelectedCatState(e.target.value);
+    setSelectedValueState('');
+  };
+
+
+  const clearNationalLevelFilter = () => {
+    setSelectedValue("");
+    setSelectedCat('');
+  };
+
+  const clearStateLevelFilter = () => {
+    setSelectedValueState("");
+    setSelectedCatState('');
+  };
+
+
+
+  console.log("selectedValue",selectedValue);
+  console.log("selectedCat",selectedCat);
+
 
   return (
     <>
@@ -568,28 +647,53 @@ const ScholarshipAllCard = () => {
                             </div>
                             <div className="p-4">
                               <TextField
+                            className={`p-4 ${selectedValue ? 'bg-[#f5eee4]' : ''}`}
                                 fullWidth
                                 variant="outlined"
                                 defaultValue="MP Police"
                                 InputProps={{
                                   readOnly: true,
+                                  onClick: handleTextFieldClick 
                                 }}
+                                sx={{cursor:"pointer"}}
                               />
                             </div>
 
                             <div className="p-4">
-                              <FormControl variant="outlined" fullWidth>
+                            <FormControl variant="outlined" fullWidth>
                                 <InputLabel>Category</InputLabel>
-                                <Select defaultValue="general" label="Category">
-                                  <MenuItem value="general">General</MenuItem>
-                                  <MenuItem value="St">St</MenuItem>
-                                  <MenuItem value="OBC">OBC</MenuItem>
-                                  <MenuItem value="sc">SC</MenuItem>
+                                <Select  label="Category" value={selectedCat} onChange={handleChangeCategory} >
+                                <MenuItem value="">Select Category</MenuItem>
+                                  {
+                                    getCategoryList2?.map((item)=>(
+                                        <MenuItem value={item?._id}>{item?.name}</MenuItem>
+                                    ))
+                                  }
+                                 
                                 </Select>
                               </FormControl>
                             </div>
 
                             <div className="flex items-center justify-center p-4 ">
+                            <Button
+                                variant="contained"
+                                sx={{
+                                  minWidth: "50px",
+                                  padding: "6px 12px 6px 10px",
+                                  backgroundColor: "#AC885A",
+                                  color: "#FFF",
+                                  textTransform: "capitalize",
+                                  marginRight:"1rem",
+                                  "&:hover": {
+                                    backgroundColor: "#AC885A",
+                                    color: "#FFF",
+                                  },
+                                }}
+                               
+                                onClick={toggleDrawer(anchor, false)}
+                              >
+                                Save
+                              </Button>
                               <Button
                                 variant="contained"
                                 sx={{
@@ -603,8 +707,10 @@ const ScholarshipAllCard = () => {
                                     color: "#FFF",
                                   },
                                 }}
+                                disabled={selectedCat === "" && selectedValue=== ""}
+                                onClick={clearNationalLevelFilter}
                               >
-                                Apply
+                                Clear Filter 
                               </Button>
                             </div>
                           </Box>
@@ -751,30 +857,56 @@ const ScholarshipAllCard = () => {
                                 <CancelOutlinedIcon />
                               </IconButton>
                             </div>
-                            <div className="p-4">
-                              <TextField
+                            <div className="p-4 cursor-pointer">
+                            <TextField
+                              className={`p-4 ${selectedValueState ? 'bg-[#f5eee4]' : ''} cursor-pointer`}
                                 fullWidth
                                 variant="outlined"
                                 defaultValue="MP Police"
                                 InputProps={{
                                   readOnly: true,
+                                  onClick: handleTextFieldClickState 
                                 }}
+                                sx={{cursor:"pointer"}}
                               />
                             </div>
 
                             <div className="p-4">
-                              <FormControl variant="outlined" fullWidth>
+                            <FormControl variant="outlined" fullWidth>
                                 <InputLabel>Category</InputLabel>
-                                <Select defaultValue="general" label="Category">
-                                  <MenuItem value="general">General</MenuItem>
-                                  <MenuItem value="St">St</MenuItem>
-                                  <MenuItem value="OBC">OBC</MenuItem>
-                                  <MenuItem value="sc">SC</MenuItem>
+                                <Select  label="Category" value={selectedCatState} onChange={handleChangeCategoryState} >
+                                <MenuItem value="">Select Category</MenuItem>
+                                  {
+                                    getCategoryList2?.map((item)=>(
+                                        <MenuItem value={item?._id}>{item?.name}</MenuItem>
+                                    ))
+                                  }
+                                 
                                 </Select>
                               </FormControl>
                             </div>
 
                             <div className="flex items-center justify-center p-4 ">
+                            <Button
+                                variant="contained"
+                                sx={{
+                                  minWidth: "50px",
+                                  padding: "6px 12px 6px 10px",
+                                  backgroundColor: "#AC885A",
+                                  color: "#FFF",
+                                  textTransform: "capitalize",
+                                  marginRight:"1rem",
+                                  "&:hover": {
+                                    backgroundColor: "#AC885A",
+                                    color: "#FFF",
+                                  },
+                                }}
+                               
+                                onClick={toggleDrawerTow(anchor, false)}
+                              >
+                                Save
+                              </Button>
+
                               <Button
                                 variant="contained"
                                 sx={{
@@ -788,9 +920,13 @@ const ScholarshipAllCard = () => {
                                     color: "#FFF",
                                   },
                                 }}
+                                disabled={selectedCatState === "" && selectedValueState === ""}
+                                onClick={clearStateLevelFilter}
                               >
-                                Apply
+                                Clear Filter 
                               </Button>
+
+                             
                             </div>
                           </Box>
                         </Drawer>
@@ -904,7 +1040,7 @@ const ScholarshipAllCard = () => {
               className="relative "
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-3 gap-4">
-                {getCurrentPageItems().length === 0 ? (
+                {getCurrentPageItems()?.length === 0 ? (
                   <div className="commonfornodata col-span-full flex flex-col items-center justify-center text-center">
                     <img
                       src={ntdImg} // Replace with your vector image URL
@@ -916,7 +1052,7 @@ const ScholarshipAllCard = () => {
                     </h5>
                   </div>
                 ) : (
-                  getCurrentPageItems().map((item) => (
+                  getCurrentPageItems()?.map((item) => (
                     <div
                       key={item.id}
                       className="max-w-sm shadow-md rounded-md main-card-g-j p-4 mb-1 relative"

@@ -32,13 +32,8 @@ import ntdImg from "../../assets/No data.gif";
 import Drawer from "@mui/material/Drawer";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import OutlinedInput from "@mui/material/OutlinedInput";
-
-
-
-const names = ["SSC", "UPSC"];
-const namesSector = ["Text1", "Text2", "Text3", "Text4" , "Text5"];
-
-
+import {getCategoryList} from "../../../rtk/features/Scholarship/getCategoryListSlice"
+import {getGovAgencyListData} from "../../../rtk/features/JobManager/getGovAgencyListDataSlice";
 
 const themeColor = createTheme({
   palette: {
@@ -138,8 +133,17 @@ const MenuProps = {
 
 const JobManagerAllCardSection = () => {
 
+  const [sectorName, setSectorName] = React.useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  const [govtSectorName, setGovtSectorName] = React.useState([]);
+  const [govtSelectAll, setGovtSelectAll] = useState(false);
+  console.log("govtSectorName",govtSectorName);
+
+  const [agencyName,setAgencyName] = React.useState([]);
+  const [agencySelectAll, setAgencySelectAll] = useState(false);
+
   const [personName, setPersonName] = React.useState([]);
-   const [sectorName, setSectorName] = React.useState([]);
 
    const [state, setState] = React.useState({
      right: false,
@@ -175,31 +179,94 @@ const JobManagerAllCardSection = () => {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    setLoading(true);
-    dispatch(getGovJobsListData()).then(()=>{
-      setLoading(false);
-    }).catch((error)=>{
-      setLoading(false);
-      console.error("Error fetching national scholarship data:", error);
-    })
-  }, []);
 
-  useEffect(() => {
-    setIsLoading(true);
-    dispatch(getPrivateJobsListData()).then(()=>{
-      setIsLoading(false);
-    }).catch((error)=>{
-      setIsLoading(false);
-      console.error("Error fetching state scholarship data:", error);
-    })
-  }, []);
 
 
   useEffect(() => {
     dispatch(getGovSectorList());
-    dispatch(getPrivateSectorList())
+    dispatch(getPrivateSectorList());
+    dispatch(getCategoryList());
+    dispatch(getGovAgencyListData());
     }, []);
+
+
+    const getPrivateSectorList2 = useSelector(
+      (state) => state.getPrivateSectorList?.users?.data
+    );
+
+      const getGovSectorList2 = useSelector(
+        (state) => state.getGovSectorList?.users?.data
+      );
+
+
+
+      const getGovAgencyListData2 = useSelector(
+        (state) => state.getGovAgencyListData?.users?.data
+      );
+
+ 
+      
+
+
+
+      let getPvtSectorIds = getPrivateSectorList2?.map((item)=> item?._id);
+      let getAgnecyIds = getGovAgencyListData2?.map((item)=> item?._id)
+
+      console.log("getPvtSectorIds",getPvtSectorIds);
+
+      console.log("getGovSectorList2",getGovSectorList2);
+      console.log("getPrivateSectorList2",getPrivateSectorList2);
+
+
+      // useEffect(() => {
+      //   setLoading(true);
+      //   if (getGovtSectorIds?.length) {
+      //     dispatch(getGovJobsListData({getGovtSectorIds,getAgnecyIds})).then(()=>{
+      //       setLoading(false);
+      //     }).catch((error)=>{
+      //       setLoading(false);
+      //       console.error("Error fetching national scholarship data:", error);
+      //     })
+      //   }
+      // }, []);
+
+      let getGovtSectorIds = getGovSectorList2?.map((item)=> item?._id)
+      console.log("getGovtSectorIds",getGovtSectorIds);
+      
+      useEffect(() => {
+        if (getGovtSectorIds || getAgnecyIds) {
+          setLoading(true);
+          dispatch(getGovJobsListData({ getGovtSectorIds, getAgnecyIds }))
+            .then(() => {
+              setLoading(false);
+            })
+            .catch((error) => {
+              setLoading(false);
+              console.error("Error fetching national scholarship data:", error);
+            });
+        }
+      }, []);
+      
+   
+      
+
+
+
+
+
+
+    
+      useEffect(() => {
+        setIsLoading(true);
+        if (getPvtSectorIds?.length > 0) {
+        dispatch(getPrivateJobsListData(getPvtSectorIds)).then(()=>{
+          setIsLoading(false);
+        }).catch((error)=>{
+          setIsLoading(false);
+          console.error("Error fetching state scholarship data:", error);
+        })
+      }
+      }, []);
 
 
   const [govtJobsData,setGovtJobsData] = useState([]);
@@ -360,57 +427,25 @@ const JobManagerAllCardSection = () => {
       const AddPreJob = () => {
         navigate("/add-private-job");
       };
-      const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
-
-      const handleMenuItemClick = (id, jobSector) => () => {
-        const updatedSelectedCheckboxes = { ...selectedCheckboxes };
-        updatedSelectedCheckboxes[id] = !updatedSelectedCheckboxes[id];
-        
-        // Filter out IDs with status true
-        const filteredIds = Object.keys(updatedSelectedCheckboxes)?.filter((key) => updatedSelectedCheckboxes[key]);
-        // Create new object with only IDs that have status true
-        const newSelectedCheckboxes = {};
-        filteredIds?.forEach((id) => {
-          newSelectedCheckboxes[id] = true;
-        });
-      
-        setSelectedCheckboxes(newSelectedCheckboxes);
-        
-      };
+    
       
     
-      const selectedCheckboxIds = Object.keys(selectedCheckboxes);
-
-      console.log("selectedCheckboxIds",selectedCheckboxIds);
-
-
-      const [selectedCheckboxes2, setSelectedCheckboxes2] = useState({});
-
-      const handleMenuItemClick2 = (id, jobSector) => () => {
-        const updatedSelectedCheckboxes2 = { ...selectedCheckboxes2 };
-        updatedSelectedCheckboxes2[id] = !updatedSelectedCheckboxes2[id];
-
-        const filteredIds = Object.keys(updatedSelectedCheckboxes2)
-        .filter((key) => updatedSelectedCheckboxes2[key]);
-        const newSelectedCheckboxes2 = {};
-        filteredIds.forEach((id) => {
-          newSelectedCheckboxes2[id] = true;
-        });
-        setSelectedCheckboxes2(newSelectedCheckboxes2);
-      };
-    
-      const selectedCheckboxIds2 = Object.keys(selectedCheckboxes2);
-      console.log("selectedCheckboxIds2",selectedCheckboxIds2);
+ useEffect(() => {
+  if(sectorName?.length || getPvtSectorIds?.length){
+    dispatch(getPrivateJobsListData(sectorName || getPvtSectorIds))
+  }
+ }, [sectorName])
 
 
-      useEffect(() => {
-        dispatch(getGovJobsListData(selectedCheckboxIds))
-      }, [selectedCheckboxes])
+ useEffect(() => {
+  if(govtSectorName?.length || agencyName?.length ){
+    setIsLoading(true);
+    dispatch(getGovJobsListData({getGovtSectorIds:govtSectorName,getAgnecyIds:agencyName}))
+  }setIsLoading(false);
+ }, [agencyName,govtSectorName])
+ 
 
 
-      useEffect(() => {
-        dispatch(getPrivateJobsListData(selectedCheckboxIds2))
-      }, [selectedCheckboxes2])
       
 
       const handlePageChange = (event, page) => {
@@ -434,34 +469,80 @@ const JobManagerAllCardSection = () => {
       };
 
 
-      const getPrivateSectorList2 = useSelector(
-        (state) => state.getPrivateSectorList?.users?.data
-      );
-
-        const getGovSectorList2 = useSelector(
-          (state) => state.getGovSectorList?.users?.data
-        );
-
-
- const handleChangeValue = (event) => {
-   const {
-     target: { value },
-   } = event;
-   setPersonName(
-     // On autofill we get a stringified value.
-     typeof value === "string" ? value.split(",") : value
-   );
- };
 
  const handleChangeValueSector = (event) => {
-   const {
-     target: { value },
-   } = event;
-   setSectorName(
-     // On autofill we get a stringified value.
-     typeof value === "string" ? value.split(",") : value
-   );
- };
+  const {
+    target: { value },
+  } = event;
+
+  if (value.includes("Select All")) {
+    if (!selectAll) {
+      const allIds = getPrivateSectorList2?.map((item) => item._id);
+      console.log("allIds",allIds);
+      setSectorName(allIds);
+    } else {
+      setSectorName();
+    }
+    setSelectAll(!selectAll);
+  } else {
+    setSelectAll(false); 
+    setSectorName(value);
+  }
+};
+
+
+const handleChangeGovtSector = (event) => {
+  const {
+    target: { value },
+  } = event;
+
+  if (value.includes("Select All")) {
+    if (!govtSelectAll) {
+      const allIds = getGovSectorList2?.map((item) => item._id);
+      console.log("allIds",allIds);
+      setGovtSectorName(allIds);
+    } else {
+      setGovtSectorName([]);
+    }
+    setGovtSelectAll(!govtSelectAll);
+  } else {
+    setGovtSelectAll(false); 
+    setGovtSectorName(value);
+  }
+};
+
+
+const handleChangeAgency = (event) => {
+  const {
+    target: { value },
+  } = event;
+
+  if (value.includes("Select All")) {
+    if (!agencySelectAll) {
+      const allIds = getGovAgencyListData2?.map((item) => item._id);
+      console.log("allIds",allIds);
+      setAgencyName(allIds);
+    } else {
+      setAgencyName([]);
+    }
+    setAgencySelectAll(!agencySelectAll);
+  } else {
+    setAgencySelectAll(false); 
+    setAgencyName(value);
+  }
+};
+
+
+
+
+const ClearPvtSectorFilter =()=>{
+setSectorName(getPvtSectorIds);
+}
+const ClearGovtSectorFilter =()=>{
+setGovtSectorName([]);
+setAgencyName([]);
+}
+
    
 
   return (
@@ -635,20 +716,36 @@ const JobManagerAllCardSection = () => {
                               <Select
                                 fullWidth
                                 multiple
-                                value={personName}
-                                onChange={handleChangeValue}
+                                value={agencyName}
+                                onChange={handleChangeAgency}
                                 input={<OutlinedInput />}
-                                renderValue={(selected) => selected.join(", ")}
+                                renderValue={(selected) => {
+                                  const selectedNames = getGovAgencyListData2
+                                    ?.filter((item) =>
+                                      selected.includes(item?._id)
+                                    )
+                                    .map((item) => item?.job_agency);
+                                  return selectedNames.join(", ");
+                                }}
                                 MenuProps={MenuProps}
+                                // disabled={govtSectorName?.length > 0}
                               >
-                                {names.map((name) => (
-                                  <MenuItem key={name} value={name}>
-                                    <Checkbox
-                                      checked={personName.indexOf(name) > -1}
-                                    />
-                                    <ListItemText primary={name} />
-                                  </MenuItem>
-                                ))}
+                             
+
+<MenuItem value="Select All">
+                                <Checkbox checked={agencySelectAll} />
+                                <ListItemText primary="Select All" />
+                              </MenuItem>
+
+                              {getGovAgencyListData2?.map((name, i) => (
+                                <MenuItem key={i} value={name?._id}>
+                                  <Checkbox
+                                    checked={agencyName?.indexOf(name?._id) > -1}
+                                  />
+                                  <ListItemText primary={name?.job_agency} />
+                                </MenuItem>
+                              ))}
+
                               </Select>
                             </div>
 
@@ -662,39 +759,82 @@ const JobManagerAllCardSection = () => {
                               <Select
                                 fullWidth
                                 multiple
-                                value={sectorName}
-                                onChange={handleChangeValueSector}
+                                value={govtSectorName}
+                                onChange={handleChangeGovtSector}
                                 input={<OutlinedInput />}
-                                renderValue={(selected) => selected.join(", ")}
+                                renderValue={(selected) => {
+                                  const selectedNames = getGovSectorList2
+                                    ?.filter((item) =>
+                                      selected.includes(item?._id)
+                                    )
+                                    .map((item) => item?.job_sector);
+                                  return selectedNames.join(", ");
+                                }}
                                 MenuProps={MenuProps}
+                                // disabled={agencyName?.length > 0}
                               >
-                                {namesSector.map((name) => (
-                                  <MenuItem key={name} value={name}>
-                                    <Checkbox
-                                      checked={sectorName.indexOf(name) > -1}
-                                    />
-                                    <ListItemText primary={name} />
-                                  </MenuItem>
-                                ))}
+                             
+
+<MenuItem value="Select All">
+                                <Checkbox checked={govtSelectAll} />
+                                <ListItemText primary="Select All" />
+                              </MenuItem>
+
+                              {getGovSectorList2?.map((name, i) => (
+                                <MenuItem key={i} value={name?._id}>
+                                  <Checkbox
+                                    checked={govtSectorName?.indexOf(name?._id) > -1}
+                                  />
+                                  <ListItemText primary={name?.job_sector} />
+                                </MenuItem>
+                              ))}
+
+
+
+
+
+
+
                               </Select>
                             </div>
 
                             <div className="flex items-center justify-center p-4 ">
+                            <Button
+                                variant="contained"
+                                sx={{
+                                  minWidth: "50px",
+                                  padding: "6px 12px 6px 10px",
+                                  backgroundColor: "#264796",
+                                  color: "#FFF",
+                                  marginRight:"1rem",
+                                  textTransform: "capitalize",
+                                  "&:hover": {
+                                    backgroundColor: "#264796",
+                                    color: "#FFF",
+                                  },
+                                }}
+                                onClick={toggleDrawer(anchor, false)}
+                              >
+                                Save
+                              </Button>
+                           
                               <Button
                                 variant="contained"
                                 sx={{
                                   minWidth: "50px",
                                   padding: "6px 12px 6px 10px",
-                                  backgroundColor: "#AC885A",
+                                  backgroundColor: "#264796",
                                   color: "#FFF",
                                   textTransform: "capitalize",
                                   "&:hover": {
-                                    backgroundColor: "#AC885A",
+                                    backgroundColor: "#264796",
                                     color: "#FFF",
                                   },
                                 }}
+                                disabled={agencyName?.length === 0 && govtSectorName?.length === 0 }
+                                onClick={ClearGovtSectorFilter}
                               >
-                                Apply
+                                Clear Filter
                               </Button>
                             </div>
                           </Box>
@@ -881,36 +1021,71 @@ const JobManagerAllCardSection = () => {
                                 value={sectorName}
                                 onChange={handleChangeValueSector}
                                 input={<OutlinedInput />}
-                                renderValue={(selected) => selected.join(", ")}
+                                // renderValue={(selected) => selected.join(", ")}
+                                renderValue={(selected) => {
+                                  const selectedNames = getPrivateSectorList2
+                                    ?.filter((item) =>
+                                      selected.includes(item?._id)
+                                    )
+                                    .map((item) => item?.job_sector);
+                                  return selectedNames.join(", ");
+                                }}
                                 MenuProps={MenuProps}
                               >
-                                {namesSector.map((name) => (
-                                  <MenuItem key={name} value={name}>
-                                    <Checkbox
-                                      checked={sectorName.indexOf(name) > -1}
-                                    />
-                                    <ListItemText primary={name} />
-                                  </MenuItem>
-                                ))}
+                                 <MenuItem value="Select All">
+                                <Checkbox checked={selectAll} />
+                                <ListItemText primary="Select All" />
+                              </MenuItem>
+                              
+
+{getPrivateSectorList2?.map((name, i) => (
+                                <MenuItem key={i} value={name?._id}>
+                                  <Checkbox
+                                    checked={sectorName?.indexOf(name?._id) > -1}
+                                  />
+                                  <ListItemText primary={name?.job_sector} />
+                                </MenuItem>
+                              ))}
                               </Select>
                             </div>
 
                             <div className="flex items-center justify-center p-4 ">
+                            <Button
+                                variant="contained"
+                                sx={{
+                                  minWidth: "50px",
+                                  padding: "6px 12px 6px 10px",
+                                  backgroundColor: "#264796",
+                                  color: "#FFF",
+                                  textTransform: "capitalize",
+                                  marginRight:"1rem",
+                                  "&:hover": {
+                                    backgroundColor: "#264796",
+                                    color: "#FFF",
+                                  },
+                                }}
+                                onClick={toggleDrawerTow(anchor, false)}
+                              >
+                               Save
+                              </Button>
                               <Button
                                 variant="contained"
                                 sx={{
                                   minWidth: "50px",
                                   padding: "6px 12px 6px 10px",
-                                  backgroundColor: "#AC885A",
+                                  backgroundColor: "#264796",
                                   color: "#FFF",
                                   textTransform: "capitalize",
                                   "&:hover": {
-                                    backgroundColor: "#AC885A",
+                                    backgroundColor: "#264796",
                                     color: "#FFF",
                                   },
                                 }}
+                                onClick={ClearPvtSectorFilter}
+                                disabled={sectorName?.length === 0  }
+
                               >
-                                Apply
+                                Clear Filter
                               </Button>
                             </div>
                           </Box>
@@ -1025,7 +1200,7 @@ const JobManagerAllCardSection = () => {
               className="relative "
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-3 gap-4">
-                {getCurrentPageItems().length === 0 ? (
+                {getCurrentPageItems()?.length === 0 ? (
                   <div className="commonfornodata col-span-full flex flex-col items-center justify-center text-center">
                     <img
                       src={ntdImg} // Replace with your vector image URL

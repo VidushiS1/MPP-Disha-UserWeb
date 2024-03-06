@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
   loading: false,
-  getPrivateJobsListDataById: [],
+  getCourseTypeData: [],
   error: "",
 };
 const getTokenFromLocalStorage = () => {
@@ -13,9 +13,9 @@ const getTokenFromLocalStorage = () => {
   return token || "";
 };
 
-export const getPrivateJobsListDataById = createAsyncThunk(
-  "jobmanager/getPrivateJobsListDataById",
-  async (privid) => {
+export const getCourseTypeData = createAsyncThunk(
+  "studentprofile/getCourseTypeData",
+  async (courseName) => {
     try {
       const config = {
         headers: {
@@ -23,10 +23,7 @@ export const getPrivateJobsListDataById = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const response = await axios.get(
-        API_URL + `get-pvt-job-view?jobId=${privid}`,
-        config
-      );
+      const response = await axios.get(API_URL + `explore-more-level?course_name=${courseName}`, config);
       return response.data;
     } catch (error) {
       console.error("An error occurred1:", error);
@@ -41,20 +38,20 @@ export const getPrivateJobsListDataById = createAsyncThunk(
   }
 );
 
-const getPrivateJobsListDataByIdSlice = createSlice({
-  name: "getPrivateJobsListDataById",
+const getCourseTypeDataSlice = createSlice({
+  name: "getCourseTypeData",
   initialState,
   extraReducers: (builder) => {
     // ----------------------------------------------------
-    builder.addCase(getPrivateJobsListDataById.pending, (state) => {
+    builder.addCase(getCourseTypeData.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(getPrivateJobsListDataById.fulfilled, (state, action) => {
+    builder.addCase(getCourseTypeData.fulfilled, (state, action) => {
       state.loading = false;
       state.users = action.payload;
       state.error = "";
     });
-    builder.addCase(getPrivateJobsListDataById.rejected, (state, action) => {
+    builder.addCase(getCourseTypeData.rejected, (state, action) => {
       state.loading = false;
       state.users = [];
       state.error = action.error.message;
@@ -62,4 +59,4 @@ const getPrivateJobsListDataByIdSlice = createSlice({
   },
 });
 
-export default getPrivateJobsListDataByIdSlice.reducer;
+export default getCourseTypeDataSlice.reducer;

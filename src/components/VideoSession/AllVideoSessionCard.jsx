@@ -404,7 +404,7 @@ const AllVideoSessionCard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-3 gap-4 mt-16 mb-16">
-              {getCurrentPageItems().length === 0 ? (
+              {getCurrentPageItems()?.length === 0 ? (
                 <div className="commonfornodata col-span-full flex flex-col items-center justify-center text-center">
                   <img
                     src={ntdImg} // Replace with your vector image URL
@@ -416,7 +416,7 @@ const AllVideoSessionCard = () => {
                   </h5>
                 </div>
               ) : (
-                getCurrentPageItems().map((item) => (
+                getCurrentPageItems()?.map((item) => (
                   <div
                     key={item.id}
                     className="max-w-sm   shadow-md rounded-md main-card-g-j p-4 mb-1"
@@ -439,9 +439,9 @@ const AllVideoSessionCard = () => {
                         <p>
                           {" "}
                           {item?.institute_name
-                            ? item.institute_name.length > 28
-                              ? item.institute_name.substring(0, 28) + "..."
-                              : item.institute_name
+                            ? item.institute_name?.length > 28
+                              ? item?.institute_name?.substring(0, 28) + "..."
+                              : item?.institute_name
                             : "institute_name Not Defined"}
                         </p>
                       </div>

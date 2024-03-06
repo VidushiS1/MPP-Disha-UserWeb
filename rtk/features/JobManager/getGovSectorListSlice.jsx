@@ -24,7 +24,7 @@ export const getGovSectorList = createAsyncThunk(
         },
       };
       const response = await axios.get(
-        API_URL + "gov-sector-list",
+        API_URL + "get-gov-sector",
         config
       );
       return response.data;

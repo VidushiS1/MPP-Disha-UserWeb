@@ -22,9 +22,9 @@ export const loginFormData = createAsyncThunk(
       const response = await axios.post(API_URL + "login", formData, config);
       console.log("response in login", response);
       const customId = "custom-id-yes";
-      if (response?.data?.message === "login successfully.") {
+      if (response?.data?.message) {
         localStorage.setItem("token", response?.data?.token);
-        localStorage.setItem("userRole", response?.data?.role);
+        localStorage.setItem("student_id", response?.data?.student_id);
       } else if (response?.data?.status === false) {
         toast.error(response?.data?.message, {
           toastId: customId,
@@ -33,10 +33,6 @@ export const loginFormData = createAsyncThunk(
       console.log("response in login", response);
       return response;
     } catch (error) {
-      console.error("An error occurred1:", error);
-      console.error("An error occurred2:", error?.response);
-      console.error("An error occurred3:", error?.response?.data);
-
       const customId = "custom-id-yes";
       toast.error(error?.response?.data?.message, {
         toastId: customId,

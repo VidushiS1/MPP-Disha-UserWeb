@@ -32,6 +32,7 @@ import ntdImg from "../../assets/No data.gif";
 import { getCareerAdviceRequestById } from "../../../rtk/features/CareerAdvice/getCareerAdviceRequestByIdSlice";
 import { ViewCareerAdviceSettingsDataList } from "../../../rtk/features/CareerAdvice/ViewCareerAdviceSettingsDataListSlice";
 import { getSlotTimeDataList } from "../../../rtk/features/CareerAdvice/getSlotTimeDataListSlice";
+import {getCareerAdviceListData} from "../../../rtk/features/CareerAdvice/getCareerAdviceListDataSlice"
 
 const themeColor = createTheme({
   palette: {
@@ -184,13 +185,8 @@ const CareerAdviceRequest = () => {
   const customId = "custom-id-yes";
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
-  const [load, setLoad] = useState(false);
-  useEffect(() => {
-    // Simulating data loading
-    setTimeout(() => {
-      setLoad(true);
-    }, 2000); // Adjust the delay as needed
-  }, []);
+  const studentId = localStorage.getItem("student_id")
+
   const navigate = useNavigate();
   const [sortByAnchorEl, setSortByAnchorEl] = useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -198,7 +194,7 @@ const CareerAdviceRequest = () => {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(getCareerAdviceRequestList())
+    dispatch(getCareerAdviceListData(studentId))
       .then(() => {
         // This code will be executed after the API call is complete
         setLoading(false);
@@ -211,7 +207,7 @@ const CareerAdviceRequest = () => {
   }, []);
 
   const careerAdviceRequestList = useSelector(
-    (state) => state.getCareerAdviceRequestList?.users?.data
+    (state) => state.getCareerAdviceListData?.users?.data
   );
 
     const viewCareerAdviceRequest = useSelector(
@@ -258,8 +254,11 @@ const CareerAdviceRequest = () => {
   //   setDialogBoxOpen(true);
   // };
 
+const [careerAdviceId,setCareerAdviceId] = useState("")
+
    const handleOpenDialogBox = async (id) => {
     console.log("id-open karne par : ", id);
+    setCareerAdviceId(id);
      await dispatch(
        getCareerAdviceRequestById(id)
      );
@@ -268,6 +267,14 @@ const CareerAdviceRequest = () => {
   const handleCloseDialogBox = () => {
     setDialogBoxOpen(false);
   };
+
+
+  const handleEditCareerAdvice = async() => {
+    await dispatch(getCareerAdviceRequestById(careerAdviceId));
+    navigate("/edit-career-advice");
+    setDialogBoxOpen(false);
+  };
+
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
@@ -424,7 +431,7 @@ const CareerAdviceRequest = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-3 gap-4 mt-16 mb-16 ">
-                {getCurrentPageItems().length === 0 ? (
+                {getCurrentPageItems()?.length === 0 ? (
                   <div className="commonfornodata col-span-full flex flex-col items-center justify-center text-center">
                     <img
                       src={ntdImg} // Replace with your vector image URL
@@ -460,22 +467,19 @@ const CareerAdviceRequest = () => {
                       <div className="left-side-contant-g-s w-full">
                         <div className="top-heading-area-g-j ">
                           <p>
-                            {item?.studentName
-                              ? item.studentName.length > 24
-                                ? item.studentName.substring(0, 24) + "..."
-                                : item.studentName
-                              : "Name Not Defined"}
+                           
+                                {item?.title?.length > 0 ? item?.title?.[0]?.substring(0,33) + "..." : "No Title" }
                           </p>
                         </div>
                         <div className="buttom-price-and-btn-area">
                           <div className="left-side-price-area-g-j">
                             <p>
                               {" "}
-                              {item?.email
-                                ? item.email.length > 32
-                                  ? item.email.substring(0, 32) + "..."
-                                  : item.email
-                                : "Email Not Defined"}
+                              {item?.description
+                                ? item?.description?.length > 40
+                                  ? item?.description?.substring(0, 40) + "..."
+                                  : item?.description
+                                : "No Description"}
                             </p>
                           </div>
                         </div>
@@ -489,19 +493,8 @@ const CareerAdviceRequest = () => {
                                 marginLeft: "-4px",
                               }}
                             />{" "}
-                            {/* <p>{item?.schedule_date}</p> */}
-                            <p>
-                              {" "}
-                              {item?.schedule_date
-                                ? new Date(item.schedule_date)
-                                    .toLocaleDateString("en-GB", {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "numeric",
-                                    })
-                                    .replace(/\//g, "-")
-                                : ""}
-                            </p>
+                            <p>{item?.schedule_date}</p>
+                           
                           </div>
                           <div className="right-side-btn-area-car">
                             <ScheduleIcon
@@ -560,7 +553,7 @@ const CareerAdviceRequest = () => {
           >
             Upcoming Schedules Details
           </DialogTitle>
-          {data2.length === 0 ? (
+          {data2?.length === 0 ? (
             <DialogContent>
               <Box mt={4} sx={{ textAlign: "center" }}>
                 <Typography variant="h4" style={headingStyle}>
@@ -569,7 +562,7 @@ const CareerAdviceRequest = () => {
               </Box>
             </DialogContent>
           ) : (
-            data2.map((dataItem, index) => (
+            data2?.map((dataItem, index) => (
               <DialogContent key={dataItem.id}>
                 <div style={{ textAlign: "center" }}>
                   <Typography variant="h6" style={nameStyle}>
@@ -699,7 +692,7 @@ const CareerAdviceRequest = () => {
                   color: "#FFF",
                 },
               }}
-              onClick={handleCloseDialogBox}
+              onClick={handleEditCareerAdvice}
             >
               Edit
             </Button>

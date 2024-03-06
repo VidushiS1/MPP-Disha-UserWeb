@@ -24,7 +24,7 @@ export const getPrivateSectorList = createAsyncThunk(
         },
       };
       const response = await axios.get(
-        API_URL + "pvt-sector-list",
+        API_URL + "get-pvt-sector",
         config
       );
       return response.data;

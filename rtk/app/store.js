@@ -26,9 +26,22 @@ import getGovJobsListDataReducer from "../features/JobManager/getGovJobsListData
 import getPrivateJobsListDataReducer from "../features/JobManager/getPrivateJobsListDataSlice";
 import getGovJobsListDataByIdReducer from "../features/JobManager/getGovJobsListDataByIdSlice";
 import getPrivateJobsListDataByIdReducer from "../features/JobManager/getPrivateJobsListDataByIdSlice";
-import InstituteManagerListDataReducer from "../features/InstituteManager/getInstituteManagerListDataSlice";
 import getInstituteManagerDataByIdReducer from "../features/InstituteManager/getInstituteManagerDataByIdSlice";
+import getGovSectorListReducer from "../features/JobManager/getGovSectorListSlice"
+import getPrivateSectorListReducer from "../features/JobManager/getPrivateSectorListSlice"
+import getGovAgencyListDataReducer from "../features/JobManager/getGovAgencyListDataSlice";
+import getSlotTimeDataListReducer from "../features/CareerAdvice/getSlotTimeDataListSlice";
+import getCareerAdviceAgendaListReducer from "../features/CareerAdvice/getCareerAdviceAgendaListSlice";
+import getCareerAdviceListDataReducer from "../features/CareerAdvice/getCareerAdviceListDataSlice";
+import getBroadcastListDataReducer from "../features/Broadcast/getBroadcastListDataSlice";
 
+import DisciplineManagerListDataReducer from "../features/FurtherEducation/getDisciplineManagerListDataSlice";
+import getSubjectDataListReducer from "../features/FurtherEducation/getSubjectDataListSlice";
+import getCourseListDataReducer from "../features/FurtherEducation/getCourseListDataSlice"
+import getCourseTypeDataReducer from "../features/FurtherEducation/getCourseTypeDataSlice"
+import InstituteManagerListDataReducer from "../features/FurtherEducation/getInstituteManagerListDataSlice"
+import GetCityListReducer from "../features/FurtherEducation/GetCityListSlice";
+import getFilterResultDataReducer from "../features/FurtherEducation/getFilterResultDataSlice"
 
 const persistConfig = {
   key: "root",
@@ -55,6 +68,22 @@ const reducer = combineReducers({
   getGovJobsListDataById: getGovJobsListDataByIdReducer,
   InstituteManagerListData: InstituteManagerListDataReducer,
   getInstituteManagerDataById: getInstituteManagerDataByIdReducer,
+  getGovSectorList: getGovSectorListReducer,
+  getPrivateSectorList: getPrivateSectorListReducer,
+  getGovAgencyListData:getGovAgencyListDataReducer,
+  getSlotTimeDataList:getSlotTimeDataListReducer,
+  getCareerAdviceAgendaList:getCareerAdviceAgendaListReducer,
+  getCareerAdviceListData:getCareerAdviceListDataReducer,
+  getBroadcastListData:getBroadcastListDataReducer,
+  
+  DisciplineManagerListData:DisciplineManagerListDataReducer,
+  getSubjectDataList:getSubjectDataListReducer,
+  getCourseListData:getCourseListDataReducer,
+  getCourseTypeData:getCourseTypeDataReducer,
+  GetCityList:GetCityListReducer,
+  getFilterResultData:getFilterResultDataReducer,
+  
+
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

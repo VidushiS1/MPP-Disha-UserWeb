@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
   loading: false,
-  getPrivateJobsListDataById: [],
+  getCareerAdviceListData: [],
   error: "",
 };
 const getTokenFromLocalStorage = () => {
@@ -13,9 +13,9 @@ const getTokenFromLocalStorage = () => {
   return token || "";
 };
 
-export const getPrivateJobsListDataById = createAsyncThunk(
-  "jobmanager/getPrivateJobsListDataById",
-  async (privid) => {
+export const getCareerAdviceListData = createAsyncThunk(
+  "studentprofile/getCareerAdviceListData",
+  async (studentid) => {
     try {
       const config = {
         headers: {
@@ -24,7 +24,7 @@ export const getPrivateJobsListDataById = createAsyncThunk(
         },
       };
       const response = await axios.get(
-        API_URL + `get-pvt-job-view?jobId=${privid}`,
+        API_URL + `schedule-career-list?student_id=${studentid}`,
         config
       );
       return response.data;
@@ -41,20 +41,20 @@ export const getPrivateJobsListDataById = createAsyncThunk(
   }
 );
 
-const getPrivateJobsListDataByIdSlice = createSlice({
-  name: "getPrivateJobsListDataById",
+const getCareerAdviceListDataSlice = createSlice({
+  name: "getCareerAdviceListData",
   initialState,
   extraReducers: (builder) => {
     // ----------------------------------------------------
-    builder.addCase(getPrivateJobsListDataById.pending, (state) => {
+    builder.addCase(getCareerAdviceListData.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(getPrivateJobsListDataById.fulfilled, (state, action) => {
+    builder.addCase(getCareerAdviceListData.fulfilled, (state, action) => {
       state.loading = false;
       state.users = action.payload;
       state.error = "";
     });
-    builder.addCase(getPrivateJobsListDataById.rejected, (state, action) => {
+    builder.addCase(getCareerAdviceListData.rejected, (state, action) => {
       state.loading = false;
       state.users = [];
       state.error = action.error.message;
@@ -62,4 +62,4 @@ const getPrivateJobsListDataByIdSlice = createSlice({
   },
 });
 
-export default getPrivateJobsListDataByIdSlice.reducer;
+export default getCareerAdviceListDataSlice.reducer;

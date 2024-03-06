@@ -27,7 +27,7 @@ const MainApp = () => {
           position="top-center"
           autoClose={900}
           limit={1}
-          hideProgressBar
+         
           newestOnTop={false}
           closeOnClick
           rtl={false}

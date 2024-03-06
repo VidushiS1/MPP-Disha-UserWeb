@@ -15,7 +15,7 @@ const getTokenFromLocalStorage = () => {
 
 export const getSlotTimeDataList = createAsyncThunk(
   "jobmanager/getSlotTimeDataList",
-  async () => {
+  async (date) => {
     try {
       const config = {
         headers: {
@@ -23,7 +23,7 @@ export const getSlotTimeDataList = createAsyncThunk(
           "Content-Type": "application/json",
         },
       };
-      const response = await axios.get(API_URL + "time-slot-list", config);
+      const response = await axios.get(API_URL + `slots-list?date=${date}`, config);
       return response.data;
     } catch (error) {
       console.error("An error occurred1:", error);

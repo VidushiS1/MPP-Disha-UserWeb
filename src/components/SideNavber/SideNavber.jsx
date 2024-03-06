@@ -26,6 +26,8 @@ import MppDishLogoImg from "../../assets/mppdishalogo22.png";
 import exitIcon from "../../assets/exit-color.png";
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
+import iconviedoLight from "../../assets/video-production.png";
+import iconviedoDark from "../../assets/video-production-dark.png";
 import {
   Dialog,
   DialogTitle,
@@ -356,7 +358,7 @@ const SideNavber = () => {
             {hoverActive === "/all-card-video-session" ||
             activeLink === "/all-card-video-session" ? (
               <>
-                <img src={BroadcastLight} />
+                <img src={iconviedoLight} />
                 <span
                   className={`${!open && "hidden"} origin-left duration-200`}
                 >
@@ -365,7 +367,7 @@ const SideNavber = () => {
               </>
             ) : (
               <>
-                <img src={BroadcastDark} />
+                <img src={iconviedoDark} />
                 <span
                   className={`${!open && "hidden"} origin-left duration-200`}
                 >

@@ -579,7 +579,7 @@ console.log("filterNationalData",filterNationalData);
                   <div>
                     {["right"].map((anchor) => (
                       <React.Fragment key={anchor}>
-                        <Tooltip title="Select Sector">
+                        <Tooltip title="National Level Filter">
                           <Button
                             variant="contained"
                             sx={{
@@ -789,7 +789,7 @@ console.log("filterNationalData",filterNationalData);
                   <div>
                     {["right"].map((anchor) => (
                       <React.Fragment key={anchor}>
-                        <Tooltip title="Select Sector">
+                        <Tooltip title="State Level Filter">
                           <Button
                             variant="contained"
                             sx={{

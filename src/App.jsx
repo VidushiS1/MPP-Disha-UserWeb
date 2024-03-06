@@ -261,7 +261,7 @@ function App() {
                       <div className="">
                         <TopNavbar />
                       </div>
-                      <div className="flex-1 p-7 scrollable-content  ">
+                      <div className="flex-1 p-7 scrollable-content second-main-container-contant-section  ">
                         <JobManagerAllCardSection />
                       </div>
                     </div>
@@ -321,7 +321,7 @@ function App() {
                       <div className="">
                         <TopNavbar />
                       </div>
-                      <div className="flex-1 p-7 scrollable-content  ">
+                      <div className="flex-1 p-7 scrollable-content  second-main-container-contant-section ">
                         <AllVideoSessionCard />
                       </div>
                     </div>

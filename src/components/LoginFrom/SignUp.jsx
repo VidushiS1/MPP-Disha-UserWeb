@@ -188,8 +188,8 @@ const handleSubmit = async (e) => {
       >
         <div className="w-full flex justify-center items-center">
           <div className="">
-            <div className="right-side-img-area flex justify-center items-center w-100">
-              <img src={StadyTree} alt="" style={{ height: "720px" }} />
+            <div className="right-side-img-area overflow-y-hidden flex justify-center items-center w-100">
+              <img src={StadyTree} alt="" style={{ height: "720px", }} />
             </div>
           </div>
           <div className="w-1/2">

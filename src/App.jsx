@@ -37,6 +37,7 @@ import AllVideoSessionCard from "./components/VideoSession/AllVideoSessionCard";
 import EditCareerAdvice from "./components/CareerAdvice/EditCareerAdvice";
 import StudentProfile from "./components/FurtherEducation/StudentProfile";
 import SignUp from "./components/LoginFrom/SignUp";
+import StudentRegistrationForm from "./components/LoginFrom/StudentRegistrationForm";
 
 
 function App() {
@@ -66,6 +67,11 @@ function App() {
             <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="/confirm-otp" element={<ConfirmOTP />} />
             <Route path="/confirm-password" element={<ConfirmPassword />} />
+
+
+            <Route path="/student-registration" element={<StudentRegistrationForm />} />
+
+
             {/* <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
               <Route
                 path="/"

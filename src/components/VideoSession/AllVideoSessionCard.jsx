@@ -25,7 +25,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useNavigate } from "react-router-dom";
 import { blue } from "@mui/material/colors";
 import { styled, alpha } from "@mui/material/styles";
-import institutionImg from "../../assets/video-camera-dark.png";
+import institutionImg from "../../assets/youtube.png";
 import { Tooltip, Typography } from "@mui/material";
 import { InstituteManagerListData } from "../../../rtk/features/InstituteManager/getInstituteManagerListDataSlice";
 import { getInstituteManagerDataById } from "../../../rtk/features/InstituteManager/getInstituteManagerDataByIdSlice";

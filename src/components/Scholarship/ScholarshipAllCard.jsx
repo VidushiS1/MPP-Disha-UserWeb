@@ -1087,10 +1087,10 @@ console.log("filterNationalData",filterNationalData);
                         <div className="buttom-price-and-btn-area">
                           <div className="left-side-price-area-g-j">
                             <p>
-                              {item?.amount_of_scholership?.length > 35
+                              {item?.amount_of_scholership?.length > 33
                                 ? item?.amount_of_scholership?.substring(
                                     0,
-                                    35
+                                    33
                                   ) + "..."
                                 : item?.amount_of_scholership}
                             </p>
@@ -1193,10 +1193,10 @@ console.log("filterNationalData",filterNationalData);
                         <div className="buttom-price-and-btn-area  ">
                           <div className="left-side-price-area-g-j ">
                             <p>
-                              {item?.amount_of_scholership?.length > 35
+                              {item?.amount_of_scholership?.length > 33
                                 ? item?.amount_of_scholership?.substring(
                                     0,
-                                    35
+                                    33
                                   ) + "..."
                                 : item?.amount_of_scholership}
                             </p>

@@ -475,3 +475,37 @@ background: #f3d6d6;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 120px;
 }
+.s-c-e-q-layout{
+        width: 125px;
+    display: flex;
+    flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+background: #ac895a3b;
+    border-radius: 10px;
+    padding: 18px 40px  10px 40px;
+    box-shadow: 0 3px 10px #00000021;
+    cursor: pointer;
+}
+.s-c-e-q-layout:hover{
+  background: #d4c2aa;  
+}
+.mid-img-area-sceq{
+    width: 40px
+}
+.mid-img-area-sceq img{
+        width: 100%;
+    height: auto;
+}
+.buttom-text-sceq p{
+    font-size: 15px;
+    color: #424242;
+    font-weight: 500;
+    margin: 0;
+    text-transform: capitalize;
+}
+.hobbies-button-area-layaout{
+    width: 150px;
+    height: 45px;
+}

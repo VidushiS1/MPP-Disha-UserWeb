@@ -38,6 +38,17 @@ import EditCareerAdvice from "./components/CareerAdvice/EditCareerAdvice";
 import StudentProfile from "./components/FurtherEducation/StudentProfile";
 import SignUp from "./components/LoginFrom/SignUp";
 import StudentRegistrationForm from "./components/LoginFrom/StudentRegistrationForm";
+import RegistrationInformationForm from "./components/RegistrationForm/RegistrationInformationForm";
+import QualificationForm from "./components/RegistrationForm/QualificationForm";
+import BelowEighthForm from "./components/RegistrationForm/BelowEighthForm";
+import BelowTenthForm from "./components/RegistrationForm/BelowTenthForm";
+import ClassTwelfthForm from "./components/RegistrationForm/ClassTwelfthForm";
+import ClassTenthForm from "./components/RegistrationForm/ClassTenthForm";
+import UnderGraduationDiplomaForm from "./components/RegistrationForm/UnderGraduationDiplomaForm";
+import UnderGraduationForm from "./components/RegistrationForm/UnderGraduationForm";
+import PostGraduationForm from "./components/RegistrationForm/PostGraduationForm";
+import JobSeekerForm from "./components/RegistrationForm/JobSeekerForm";
+import HobbiesForm from "./components/RegistrationForm/HobbiesForm";
 
 
 function App() {
@@ -68,9 +79,39 @@ function App() {
             <Route path="/confirm-otp" element={<ConfirmOTP />} />
             <Route path="/confirm-password" element={<ConfirmPassword />} />
 
-
-            <Route path="/student-registration" element={<StudentRegistrationForm />} />
-
+            <Route
+              path="/student-registration"
+              element={<StudentRegistrationForm />}
+            />
+            <Route
+              path="/student-registration-information-form"
+              element={<RegistrationInformationForm />}
+            />
+            <Route
+              path="/student-select-qualification"
+              element={<QualificationForm />}
+            />
+            <Route path="/student-below-eighth" element={<BelowEighthForm />} />
+            <Route path="/student-below-tenth" element={<BelowTenthForm />} />
+            <Route path="/student-class-tenth" element={<ClassTenthForm />} />
+            <Route
+              path="/student-class-twekfth"
+              element={<ClassTwelfthForm />}
+            />
+            <Route
+              path="/student-under-graduation-diploma"
+              element={<UnderGraduationDiplomaForm />}
+            />
+            <Route
+              path="/student-under-graduation"
+              element={<UnderGraduationForm />}
+            />
+            <Route
+              path="/student-post-graduation"
+              element={<PostGraduationForm />}
+            />
+            <Route path="/student-job-seeker" element={<JobSeekerForm />} />
+            <Route path="/student-hobbies" element={<HobbiesForm />} />
 
             {/* <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
               <Route
@@ -92,10 +133,7 @@ function App() {
               />
             </Route> */}
 
-            <Route
-              path="/"
-              element={<PrivateRoute isAuthenticated={""} />}
-            >
+            <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
               <Route
                 path="/"
                 element={

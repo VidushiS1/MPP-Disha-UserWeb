@@ -100,3 +100,19 @@
 .top-text-field-area{
     width: 70%;
 }
+.main-right-side-section-main::-webkit-scrollbar {
+ display: none;
+  
+}
+
+.main-right-side-section-main::-webkit-scrollbar-track {
+  background-color: #ebebeb;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.main-right-side-section-main::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #6d6d6d;
+}

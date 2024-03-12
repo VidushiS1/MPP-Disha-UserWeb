@@ -27,9 +27,10 @@ import { blue } from "@mui/material/colors";
 import { styled, alpha } from "@mui/material/styles";
 import institutionImg from "../../assets/video-camera-dark.png";
 import { Tooltip, Typography } from "@mui/material";
-import { InstituteManagerListData } from "../../../rtk/features/InstituteManager/getInstituteManagerListDataSlice";
 import { getInstituteManagerDataById } from "../../../rtk/features/InstituteManager/getInstituteManagerDataByIdSlice";
 import { addInstituteManagerData } from "../../../rtk/features/InstituteManager/addInstituteManagerDataSlice";
+import { getVideoSessionListData } from "../../../rtk/features/VideoSession/getVideoSessionListDataSlice";
+import { getVideoSessionDataById } from "../../../rtk/features/VideoSession/getVideoSessionDataByIdSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
@@ -126,37 +127,19 @@ const theme = createTheme({
 
 const AllVideoSessionCard = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [sessionName, setSessionName] = useState("xyz");
-  const [url, setUrl] = useState(
-    "https://www.youtube.com/watch?v=dummyvideoid"
-  );
-  const [sessionNameEditMode, setSessionNameEditMode] = useState(false);
-  const [urlEditMode, setUrlEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sortByAnchorEl, setSortByAnchorEl] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchText, setSearchText] = useState("");
   const sortByOpen = Boolean(sortByAnchorEl);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [adddialogBoxOpen, setAddDialogBoxOpen] = useState(false);
   const [viewdialogBoxOpen, setViewDialogBoxOpen] = useState(false);
   const [sortBy, setSortBy] = useState("");
   const [data, setFetchData] = useState([]);
-  const customId = "custom-id-yes";
   const itemsPerPage = 9;
   const [currentPage, setCurrentPage] = useState(1);
-  const [addInstituteForm, setAddInstituteForm] = useState({
-    institute_name: "",
-    place: "",
-    institute_type: "",
-    institute_url: "",
-  });
+
 
   useEffect(() => {
     setLoading(true);
-    dispatch(InstituteManagerListData())
+    dispatch(getVideoSessionListData())
       .then(() => {
         setLoading(false);
       })
@@ -166,37 +149,27 @@ const AllVideoSessionCard = () => {
       });
   }, []);
 
-  useEffect(() => {
-    // dispatch(GetCityList());
-  }, []);
 
-  const [newSelecteItem, setNewSelectedItem] = useState("");
 
-  const handleCityChange = (selectedOption) => {
-    setNewSelectedItem(selectedOption);
-    if (selectedOption) {
-      setAddInstituteForm({
-        ...addInstituteForm,
-        place: selectedOption.label,
-      });
-    }
-  };
 
-  // const cityList = useSelector((state) => state.GetCityList?.users?.data);
-  // console.log("cityList", cityList);
 
-  // const formattedCityList = cityList?.map((city) => ({
-  //   value: city._id,
-  //   label: `${city.city}`,
-  // }));
-  // console.log("formattedCityList", formattedCityList);
 
-  const InstituteManagerList = useSelector(
-    (state) => state.InstituteManagerListData?.users?.data
+  const getVideoSessionListData2 = useSelector(
+    (state) => state.getVideoSessionListData?.users?.data
   );
   useEffect(() => {
-    setFetchData(InstituteManagerList || []);
-  }, [InstituteManagerList]);
+    if(getVideoSessionListData2 && getVideoSessionListData2?.length > 0){
+      setFetchData(getVideoSessionListData2 || []);
+      setCurrentPage(1);
+    }
+  }, [getVideoSessionListData2]);
+
+
+  const getCurrentPageItems = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data?.slice(startIndex, endIndex);
+  };
 
   const handleSortByClick = (event) => {
     setSortByAnchorEl(event.currentTarget);
@@ -205,15 +178,15 @@ const AllVideoSessionCard = () => {
     setSortByAnchorEl(null);
   };
 
-  const handleOpenAddDialogBox = async () => {
-    setAddDialogBoxOpen(true);
-  };
-  const handleCloseAddDialogBox = () => {
-    setAddDialogBoxOpen(false);
-  };
 
-  const handleOpenViewDialogBox = async () => {
-    setViewDialogBoxOpen(true);
+
+  const handleOpenViewDialogBox = async (id) => {
+    try {
+      await dispatch(getVideoSessionDataById(id));
+      setViewDialogBoxOpen(true);
+    } catch (error) {
+      console.log("error while geting view data",error);
+    }
   };
   const handleCloseViewDialogBox = () => {
     setViewDialogBoxOpen(false);
@@ -223,13 +196,30 @@ const AllVideoSessionCard = () => {
     setCurrentPage(page);
   };
 
-  const getCurrentPageItems = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return data?.slice(startIndex, endIndex);
-  };
+  const [viewVideoSessionForm, setViewVideoSessionForm] = useState({
+    agenda: "",
+    link: "",
+   
+  });
 
-  console.log("InstituteManagerList", InstituteManagerList);
+  
+  const getVideoSessionDataById2 = useSelector(
+    (state) => state.getVideoSessionDataById?.users?.data?.[0]
+  );
+
+  console.log("getVideoSessionDataById2",getVideoSessionDataById2);
+
+  useEffect(() => {
+    if (getVideoSessionDataById2) {
+      setViewVideoSessionForm({
+        agenda: getVideoSessionDataById2?.agenda || "",
+        link: getVideoSessionDataById2?.link || "",
+        sessionId:getVideoSessionDataById2?._id
+      });
+    }
+  }, [getVideoSessionDataById2]);
+
+  console.log("getVideoSessionListData2", getVideoSessionListData2);
 
   useEffect(() => {
     let sortedData = [...data];
@@ -243,105 +233,8 @@ const AllVideoSessionCard = () => {
     setFetchData(sortedData);
   }, [sortBy]);
 
-  const inValidFields = [
-    "institute_name",
-    "place",
-    "institute_type",
-    "institute_url",
-  ];
 
-  const SaveAddInstitute = async () => {
-    const hasEmptyFields = inValidFields?.some(
-      (field) => !addInstituteForm[field]
-    );
-
-    if (hasEmptyFields) {
-      toast.error("Please fill all the required fields", { toastId: customId });
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const actionResult = await dispatch(
-        addInstituteManagerData(addInstituteForm)
-      );
-      console.log("actionResult", actionResult);
-      if (actionResult?.payload?.message) {
-        await dispatch(InstituteManagerListData());
-        toast.success(actionResult?.payload?.message, {
-          toastId: customId,
-        });
-        handleCloseAddDialogBox();
-        setIsLoading(false);
-        setAddInstituteForm({
-          institute_name: "",
-          place: "",
-          institute_type: "",
-          institute_url: "",
-        });
-      }
-    } catch (error) {
-      console.log("Error While Adding Institute", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAddInstituteForm({
-      ...addInstituteForm,
-      [name]: value,
-    });
-  };
-
-  const handleViewInstitute = async (id) => {
-    try {
-      setLoading(true);
-      await dispatch(getInstituteManagerDataById(id));
-      setLoading(false);
-      navigate("/view-institute-manager");
-    } catch (error) {
-      console.log("error", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setAddInstituteForm({
-      ...addInstituteForm,
-      place: selectedOption,
-    });
-  }, [selectedOption]);
-
-  console.log("addInstituteForm", addInstituteForm);
-
-  useEffect(() => {
-    const filterData = InstituteManagerList?.filter((item) => {
-      const nameMatch =
-        item?.institute_name
-          ?.toLowerCase()
-          .includes(searchText?.toLowerCase()) ||
-        item?.place?.toLowerCase().includes(searchText?.toLowerCase());
-      return nameMatch;
-    });
-    setFetchData(filterData);
-    setCurrentPage(1);
-  }, [searchText, InstituteManagerList]);
-
-   const handleEdit = () => {
-     setIsEditMode(true);
-     setSessionNameEditMode(true);
-     setUrlEditMode(true);
-   };
-
-   const handleSessionNameChange = (e) => {
-     setSessionName(e.target.value);
-   };
-
-   const handleUrlChange = (e) => {
-     setUrl(e.target.value);
-   };
+  console.log("data",data);
 
   return (
     <>
@@ -438,24 +331,28 @@ const AllVideoSessionCard = () => {
                       <div className="top-heading-area-g-j ">
                         <p>
                           {" "}
-                          {item?.institute_name
-                            ? item.institute_name?.length > 28
-                              ? item?.institute_name?.substring(0, 28) + "..."
-                              : item?.institute_name
-                            : "institute_name Not Defined"}
+                          {item?.agenda
+                            ? item.agenda?.length > 28
+                              ? item?.agenda?.substring(0, 28) + "..."
+                              : item?.agenda
+                            : "agenda Not Defined"}
                         </p>
                       </div>
                       <div className="buttom-price-and-btn-area  ">
                         <div className="left-side-price-area-g-j  ">
                           <p>
-                            <a
-                              href="https://www.youtube.com/watch?v=dummyvideoid"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: "#4d4dff" }}
-                            >
-                              https://www.youtube.com/watch?d...
-                            </a>
+                          <a
+                    href={
+                      item?.link?.includes("://")
+                        ? item?.link
+                        : `https://${item?.link}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#4d4dff" }}
+                  >
+                    {item?.link}
+                  </a>
                           </p>
                         </div>
                       </div>
@@ -496,110 +393,7 @@ const AllVideoSessionCard = () => {
 
       {/* add video session */}
 
-      <Dialog
-        open={adddialogBoxOpen}
-        onClose={handleCloseAddDialogBox}
-        PaperProps={{
-          style: {
-            width: "500px",
-          },
-        }}
-      >
-        <DialogContent sx={{ mt: 1 }}>
-          <DialogTitle
-            style={{
-              fontWeight: "500",
-              fontSize: "text-xs", // Tailwind equivalent for 0.875rem
-              padding: "0px",
-            }}
-            sx={{ textAlign: "center" }}
-          >
-            Add Video Session
-          </DialogTitle>
 
-          <DialogContent sx={{ mt: 4 }}>
-            <Box>
-              <label
-                htmlFor="about"
-                className="block text-sm font-medium leading-6 text-gray-900 text-start	"
-              >
-                Session Name
-              </label>
-              <TextField
-                className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-yellow-dark focus:ring-offset-2 "
-                placeholder="Please Enter Session Name"
-                name="institute_name"
-                value={addInstituteForm.institute_name}
-                onChange={handleChange}
-              />
-            </Box>
-
-            <Box sx={{ mt: 2 }}>
-              <label
-                htmlFor="about"
-                className="block text-sm font-medium leading-6 text-gray-900 text-start	"
-              >
-                URL
-              </label>
-              <TextField
-                className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-yellow-dark focus:ring-offset-2 "
-                placeholder="Past Your URL Link"
-                value={addInstituteForm.institute_url}
-                name="institute_url"
-                onChange={handleChange}
-              />
-            </Box>
-          </DialogContent>
-
-          <DialogActions
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            className="mt-5"
-          >
-            <Button
-              variant="contained"
-              sx={{
-                minWidth: "35px",
-                padding: "6px 25px",
-                marginRight: "15px",
-                backgroundColor: "#AC885A",
-                color: "#FFF",
-                textTransform: "capitalize",
-                "&:hover": {
-                  backgroundColor: "#AC885A",
-                  color: "#FFF",
-                },
-              }}
-              type="submit"
-              onClick={handleCloseAddDialogBox}
-            >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                minWidth: "35px",
-                padding: "6px 25px",
-                marginRight: "10px",
-                backgroundColor: "#AC885A",
-                color: "#FFF",
-                textTransform: "capitalize",
-                "&:hover": {
-                  backgroundColor: "#AC885A",
-                  color: "#FFF",
-                },
-              }}
-              disabled={isLoading}
-              onClick={SaveAddInstitute}
-            >
-              {isLoading ? <div className="text-white">Saving...</div> : "Save"}
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
 
       {/* View video session */}
 
@@ -643,10 +437,11 @@ const AllVideoSessionCard = () => {
               </label>
               <TextField
                 className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-yellow-dark focus:ring-offset-2 "
-                placeholder="Please Enter Session Name"
-                value={sessionName}
-                onChange={handleSessionNameChange}
-                readOnly={!sessionNameEditMode}
+                name="agenda"
+                value={viewVideoSessionForm?.agenda}
+                inputProps={{
+                  readOnly:true
+                }}
               />
             </Box>
 
@@ -660,9 +455,11 @@ const AllVideoSessionCard = () => {
               <TextField
                 className="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-yellow-dark focus:ring-offset-2 "
                 placeholder="Past Your URL Link"
-                value={url}
-                onChange={handleUrlChange}
-                readOnly={!urlEditMode}
+                name="link"
+                value={viewVideoSessionForm?.link}
+                inputProps={{
+                  readOnly:true
+                }}
               />
             </Box>
           </DialogContent>

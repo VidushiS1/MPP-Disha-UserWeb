@@ -34,7 +34,6 @@ import getSlotTimeDataListReducer from "../features/CareerAdvice/getSlotTimeData
 import getCareerAdviceAgendaListReducer from "../features/CareerAdvice/getCareerAdviceAgendaListSlice";
 import getCareerAdviceListDataReducer from "../features/CareerAdvice/getCareerAdviceListDataSlice";
 import getBroadcastListDataReducer from "../features/Broadcast/getBroadcastListDataSlice";
-
 import DisciplineManagerListDataReducer from "../features/FurtherEducation/getDisciplineManagerListDataSlice";
 import getSubjectDataListReducer from "../features/FurtherEducation/getSubjectDataListSlice";
 import getCourseListDataReducer from "../features/FurtherEducation/getCourseListDataSlice"
@@ -42,6 +41,8 @@ import getCourseTypeDataReducer from "../features/FurtherEducation/getCourseType
 import InstituteManagerListDataReducer from "../features/FurtherEducation/getInstituteManagerListDataSlice"
 import GetCityListReducer from "../features/FurtherEducation/GetCityListSlice";
 import getFilterResultDataReducer from "../features/FurtherEducation/getFilterResultDataSlice"
+import getVideoSessionListDataReducer from "../features/VideoSession/getVideoSessionListDataSlice";
+import getVideoSessionDataByIdReducer from "../features/VideoSession/getVideoSessionDataByIdSlice";
 
 const persistConfig = {
   key: "root",
@@ -82,7 +83,8 @@ const reducer = combineReducers({
   getCourseTypeData:getCourseTypeDataReducer,
   GetCityList:GetCityListReducer,
   getFilterResultData:getFilterResultDataReducer,
-  
+  getVideoSessionDataById:getVideoSessionDataByIdReducer,
+  getVideoSessionListData:getVideoSessionListDataReducer,
 
 });
 

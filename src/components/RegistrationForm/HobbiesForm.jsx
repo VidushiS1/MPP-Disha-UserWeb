@@ -248,8 +248,7 @@ const handleHobbySelect = (hobbyName) => {
     if (selectedHobbies.length < 3) {
       setSelectedHobbies([...selectedHobbies, hobbyName]);
     } else {
-      // You can provide feedback here that only three hobbies can be selected
-      // For example, displaying a toast message
+     
       toast.error("You can select only three hobbies.");
     }
   }

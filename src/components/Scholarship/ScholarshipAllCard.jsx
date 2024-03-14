@@ -661,7 +661,7 @@ console.log("filterNationalData",filterNationalData);
 
                             <div className="p-4">
                             <FormControl variant="outlined" fullWidth>
-                                <InputLabel>Category</InputLabel>
+                                <InputLabel sx={{marginTop:"-0.6rem"}}>Category</InputLabel>
                                 <Select  label="Category" value={selectedCat} onChange={handleChangeCategory} >
                                 <MenuItem value="">Select Category</MenuItem>
                                   {
@@ -873,7 +873,7 @@ console.log("filterNationalData",filterNationalData);
 
                             <div className="p-4">
                             <FormControl variant="outlined" fullWidth>
-                                <InputLabel>Category</InputLabel>
+                                <InputLabel sx={{marginTop:"-0.6rem"}}>Category</InputLabel>
                                 <Select  label="Category" value={selectedCatState} onChange={handleChangeCategoryState} >
                                 <MenuItem value="">Select Category</MenuItem>
                                   {

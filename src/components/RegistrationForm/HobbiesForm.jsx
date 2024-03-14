@@ -48,8 +48,6 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DirectionsWalkOutlinedIcon from "@mui/icons-material/DirectionsWalkOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import TerrainOutlinedIcon from "@mui/icons-material/TerrainOutlined";
-import SportsFootballOutlinedIcon from "@mui/icons-material/SportsFootballOutlined";
 import InsertCommentOutlinedIcon from "@mui/icons-material/InsertCommentOutlined";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined";

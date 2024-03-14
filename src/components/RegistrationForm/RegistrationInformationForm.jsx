@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/student-information-form.gif";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -17,6 +17,8 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+import {addStuentRegistrationInformationData} from "../../../rtk/features/RegistrationForm/addStuentRegistrationInformationDataSlice"
+import dayjs from "dayjs";
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -37,69 +39,115 @@ const RegistrationInformationForm = () => {
   const dispatch = useDispatch();
   const customId = "custom-id-yes";
   const Navigate = useNavigate();
-
-  const [fromDetail, setFormDetail] = useState({
-    mobile_no: "",
-    password: "",
-    fcm_token: "fdugihjhgydfijlkui0789i",
-  });
-  console.log("fromDetail", fromDetail);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const addSignUpData2 = useSelector((state) => state.addSignUpData?.users?.data);
+  console.log("addSignUpData2", addSignUpData2);
+
+const [registrationInfoForm,setRegistrationInfoFrom] = useState({
+  student_name:addSignUpData2?.name || "",
+  dob:"",
+  gender:"",
+  category:"",
+  father_name:"" ,
+  father_occupation:"",
+  mother_name:"",
+  mother_occupation:"" ,
+  name:"",
+  designation:"",
+  posting_unit:"",
+  relation:""
+})
+
+
+
+
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  if (
+    name === "student_name" ||
+    name === "father_name" ||
+    name === "father_occupation" ||
+    name === "mother_name" ||
+    name === "mother_occupation" ||
+    name === "name" ||
+    name === "relation"
+  ) {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+
+    if (!alphabeticPattern.test(value)) {
+      return;
+    }
+  }
+
+  setRegistrationInfoFrom({
+    ...registrationInfoForm,
+    [name]: type === "checkbox" ? checked : value,
+  });
+};
+
+
+
+const requiredField = ["student_name","gender","category","father_name","father_occupation","mother_name","mother_occupation","designation","posting_unit","relation"];
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
+  
+
+    const hasEmptyFields = requiredField.some(
+      (fields) => !registrationInfoForm[fields]
+    );
+    if (hasEmptyFields) {
+      toast.error("Please fill all the required fields", {
+        toastId: customId,
+      });
+      return;
+    }
+
+    if(registrationInfoForm?.dob === "Invalid Date"){
+      toast.error("Please Select the DOB.", {
+        toastId: customId,
+      });
+      return
+    }
+
+      const actionResult = await dispatch(
+      addStuentRegistrationInformationData(registrationInfoForm)
+    );
+    if (actionResult?.payload?.message) {
+      setLoading(false);
+      toast.success(actionResult?.payload?.message, { toastId: customId });
+      Navigate("/student-select-qualification");
+    }
+  } catch (error) {
+    console.log("error", error);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const dateFormat = "DD/MM/YYYY";
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs( dateFormat)
+  );
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
   };
-
-  const loginDetailsHandler = (e) => {
-    const { name, value } = e.target;
-
-    setFormDetail((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
+  const maxDate = dayjs().subtract(0, "day");
+  useEffect(() => {
+    setRegistrationInfoFrom((prevFormValue) => ({
+      ...prevFormValue,
+      dob: selectedDate?.format(dateFormat),
     }));
-  };
-
-  const handleSubmit = () => {
-    Navigate("/student-select-qualification");
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!fromDetail.mobile_no || !fromDetail.password) {
-  //     toast.error("Mobile Number and password are required", {
-  //       toastId: customId,
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await dispatch(loginFormData(fromDetail));
-  //     console.log("success response", response);
-  //     if (response.payload?.data?.message === "User login successfully.") {
-  //       toast.success("Login Successful", {
-  //         toastId: customId,
-  //       });
-  //       Navigate("/");
-  //     } else {
-  //       console.log("error response", response);
-  //       toast.error(
-  //         response.payload?.data?.message ||
-  //           "Mobile Number or Password Does Not Exist",
-  //         {
-  //           toastId: customId,
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     toast.error("An error occurred. Please try again.", {
-  //       toastId: customId,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  }, [selectedDate]);
+  
+  console.log("registrationInfoForm",registrationInfoForm);
 
   return (
     <>
@@ -129,6 +177,7 @@ const RegistrationInformationForm = () => {
                         background: "#AC885A",
                       },
                     }}
+                    onClick={()=>Navigate("/sign-up")}
                   >
                     <KeyboardBackspaceIcon sx={{ color: "#FFF" }} />
                   </IconButton>
@@ -147,15 +196,21 @@ const RegistrationInformationForm = () => {
                     <div className="mb-3 w-full flex justify-between items-center">
                       <div className="flex flex-col">
                         <label
-                          htmlFor="name"
+                          htmlFor="student_name"
                           className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+                          placeholder="Please Enter Name"
                         >
                           Name
                         </label>
                         <TextField
                           sx={{ width: "220px" }}
-                          id="name"
-                          defaultValue="Piyush Vyas"
+                          id="student_name"
+                         name="student_name"
+                         value={registrationInfoForm.student_name}
+                         onChange={handleChange}
+                         inputProps={{
+                          readOnly:true
+                         }}
                         />
                       </div>
                       <div className="flex flex-col">
@@ -175,6 +230,9 @@ const RegistrationInformationForm = () => {
                                 color: "#AC885A",
                               },
                             }}
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            maxDate={maxDate}
                           />
                         </LocalizationProvider>
                       </div>
@@ -190,10 +248,13 @@ const RegistrationInformationForm = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="gender"
+                          value={registrationInfoForm.gender}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
-                            value="female"
+                             label="Female"
+                             value="female"
                             control={
                               <Radio
                                 sx={{
@@ -202,12 +263,15 @@ const RegistrationInformationForm = () => {
                                     color: "#AC885A",
                                   },
                                 }}
+                               
                               />
                             }
-                            label="Female"
+                           
+    
                           />
                           <FormControlLabel
-                            value="male"
+                           value="male"
+                           label="Male"
                             control={
                               <Radio
                                 sx={{
@@ -216,12 +280,14 @@ const RegistrationInformationForm = () => {
                                     color: "#AC885A",
                                   },
                                 }}
+                               
                               />
                             }
-                            label="Male"
+                            
                           />
                           <FormControlLabel
-                            value="other"
+                           value="other"
+                           label="Other"
                             control={
                               <Radio
                                 sx={{
@@ -232,7 +298,7 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="Other"
+                        
                           />
                         </RadioGroup>
                       </div>
@@ -248,10 +314,13 @@ const RegistrationInformationForm = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="category"
+                          value={registrationInfoForm.category}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
                             value="general"
+                            label="General"
                             control={
                               <Radio
                                 sx={{
@@ -262,10 +331,11 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="General"
+                           
                           />
                           <FormControlLabel
                             value="obc"
+                            label="OBC"
                             control={
                               <Radio
                                 sx={{
@@ -276,10 +346,11 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="OBC"
+                            
                           />
                           <FormControlLabel
                             value="sc"
+                            label="SC"
                             control={
                               <Radio
                                 sx={{
@@ -290,10 +361,11 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="SC"
+                            
                           />
                           <FormControlLabel
                             value="st"
+                            label="ST"
                             control={
                               <Radio
                                 sx={{
@@ -304,10 +376,11 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="ST"
+                            
                           />
                           <FormControlLabel
                             value="ews"
+                            label="EWS"
                             control={
                               <Radio
                                 sx={{
@@ -318,10 +391,11 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="EWS"
+                            
                           />
                           <FormControlLabel
                             value="nt"
+                            label="NT"
                             control={
                               <Radio
                                 sx={{
@@ -332,7 +406,7 @@ const RegistrationInformationForm = () => {
                                 }}
                               />
                             }
-                            label="NT"
+                            
                           />
                         </RadioGroup>
                       </div>
@@ -347,7 +421,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="father_name"
+                          value={registrationInfoForm.father_name}
+                          onChange={handleChange}
                           placeholder="Please Enter Father Name"
                         />
                       </div>
@@ -360,7 +436,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="father_occupation"
+                          value={registrationInfoForm.father_occupation}
+                          onChange={handleChange}
                           placeholder="Please Enter Father Occupation"
                         />
                       </div>
@@ -375,7 +453,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="mother_name"
+                          value={registrationInfoForm.mother_name}
+                          onChange={handleChange}
                           placeholder="Please Enter Mother Name"
                         />
                       </div>
@@ -388,7 +468,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="mother_occupation"
+                          value={registrationInfoForm.mother_occupation}
+                          onChange={handleChange}
                           placeholder="Please Enter Mother Occupation"
                         />
                       </div>
@@ -408,7 +490,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="name"
+                          value={registrationInfoForm.name}
+                          onChange={handleChange}
                           placeholder="Please Enter Name"
                         />
                       </div>
@@ -421,7 +505,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="designation"
+                          value={registrationInfoForm.designation}
+                          onChange={handleChange}
                           placeholder="Please Enter Designtion"
                         />
                       </div>
@@ -436,7 +522,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="posting_unit"
+                          value={registrationInfoForm.posting_unit}
+                          onChange={handleChange}
                           placeholder="Please Enter Posting Unit"
                         />
                       </div>
@@ -449,7 +537,9 @@ const RegistrationInformationForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="relation"
+                          value={registrationInfoForm.relation}
+                          onChange={handleChange}
                           placeholder="Please Enter Relation"
                         />
                       </div>

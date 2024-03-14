@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/job-seeker.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField,Checkbox } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -16,9 +16,9 @@ import { YearCalendar } from "@mui/x-date-pickers/YearCalendar";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
+import dayjs from "dayjs";
+import {addJobSeekerData} from "../../../rtk/features/RegistrationForm/addJobSeekerDataSlice"
+
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -39,76 +39,187 @@ const JobSeekerForm = () => {
   const dispatch = useDispatch();
   const customId = "custom-id-yes";
   const Navigate = useNavigate();
-
-  const [fromDetail, setFormDetail] = useState({
-    mobile_no: "",
-    password: "",
-    fcm_token: "fdugihjhgydfijlkui0789i",
-  });
-  console.log("fromDetail", fromDetail);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dateFormat = "YYYY";
+  const [isFieldDisabled, setIsFieldDisabled] = useState(false);
+  const maxDate = dayjs().subtract(0, "day");
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDateTenth, setSelectedDateTenth] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDateTwelfth, setSelectedDateTwelfth] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDateUgdp, setSelectedDateUgdp] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDatePg, setSelectedDatePg] = useState(
+    dayjs( dateFormat)
+  );
+  const getTokenFromLocalStorage = () => {
+    const student_id = localStorage.getItem("student_id");
+    return student_id || "";
   };
 
-  const loginDetailsHandler = (e) => {
-    const { name, value } = e.target;
 
-    setFormDetail((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
+
+
+ const [jobSeekerForm,setjobSeekerForm] = useState({
+    student_id:getTokenFromLocalStorage(),
+    job_role:"",
+    parcentage:"",
+    passing_year:"" ,
+    school_name:"",
+    class_name:"" ,
+    school_name_10th:"",
+    board_10th:"" ,
+    parcentage_10th:"",
+    passing_year_10th:"" ,
+    passing_year_12th:"" ,
+    parcentage_12th:"" ,
+    board_12th:"" ,
+    school_name_12th:"" ,
+    subject_12th:"",
+    institute_ug:"",
+    course_ug:"",
+    passing_year_ug:"",
+    parcentage_ug:"",
+    passing_year_pg:"",
+    parcentage_pg:"",
+    course_pg:"",
+    institute_pg:"",
+  })
+
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setjobSeekerForm({
+      ...jobSeekerForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
+  };
+
+  
+  const handleDateChangeTenth = (newValue) => {
+    setSelectedDateTenth(newValue);
+  };
+
+  const handleDateChangeTwelfth = (newValue) => {
+    setSelectedDateTwelfth(newValue);
+  };
+
+    const handleDateChangeUgdp = (newValue) => {
+    setSelectedDateUgdp(newValue);
+  };
+
+  const handleDateChangePg = (newValue) => {
+    setSelectedDatePg(newValue);
+  };
+
+
+
+
+  useEffect(() => {
+    setjobSeekerForm((prevFormValue) => ({
+      ...prevFormValue,
+      passing_year: selectedDate?.format(dateFormat),
+      passing_year_10th: selectedDateTenth?.format(dateFormat),
+      passing_year_12th: selectedDateTwelfth?.format(dateFormat),
+      passing_year_ug: selectedDateUgdp?.format(dateFormat),
+      passing_year_pg: selectedDatePg?.format(dateFormat),
     }));
+  }, [selectedDate,selectedDateTenth,selectedDateTwelfth,selectedDateUgdp,selectedDatePg]);
+
+
+  const requiredField = ["student_id","job_role"];
+
+
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+  
+      const hasEmptyFields = requiredField.some(
+        (field) => !jobSeekerForm[field]
+      );
+      if (hasEmptyFields) {
+        toast.error("Please select the job role", {
+          toastId: customId,
+        });
+        return;
+      }
+  
+      if (
+        !(
+          jobSeekerForm.parcentage &&
+          jobSeekerForm.passing_year !== "Invalid Date" &&
+          jobSeekerForm.school_name &&
+          jobSeekerForm.class_name
+        ) &&
+        (
+          !(
+            jobSeekerForm.school_name_10th &&
+            jobSeekerForm.board_10th &&
+            jobSeekerForm.parcentage_10th &&
+            jobSeekerForm.passing_year_10th !== "Invalid Date"
+          ) &&
+          !(
+            jobSeekerForm.school_name_12th &&
+            jobSeekerForm.board_12th &&
+            jobSeekerForm.parcentage_12th &&
+            jobSeekerForm.passing_year_12th !== "Invalid Date" &&
+            jobSeekerForm.subject_12th
+          ) &&
+          !(
+            jobSeekerForm.institute_ug &&
+            jobSeekerForm.passing_year_ug !== "Invalid Date" &&
+            jobSeekerForm.parcentage_ug &&
+            jobSeekerForm.course_ug
+          ) &&
+          !(
+            jobSeekerForm.institute_pg &&
+            jobSeekerForm.passing_year_pg !== "Invalid Date" &&
+            jobSeekerForm.parcentage_pg &&
+            jobSeekerForm.course_pg
+          )
+        )
+      ) {
+        toast.error("Please fill at least any one complete graduation data", {
+          toastId: customId,
+        });
+        return;
+      }
+      
+      
+  
+      const actionResult = await dispatch(addJobSeekerData(jobSeekerForm));
+      if (actionResult?.payload?.message) {
+        setLoading(false);
+        toast.success(actionResult?.payload?.message, { toastId: customId });
+        Navigate("/student-hobbies");
+      }
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
-  const handleSubmit = () => {
-    Navigate("/student-hobbies");
-  };
+console.log("jobSeekerForm",jobSeekerForm);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!fromDetail.mobile_no || !fromDetail.password) {
-  //     toast.error("Mobile Number and password are required", {
-  //       toastId: customId,
-  //     });
-  //     return;
-  //   }
 
-  //   try {
-  //     setLoading(true);
-  //     const response = await dispatch(loginFormData(fromDetail));
-  //     console.log("success response", response);
-  //     if (response.payload?.data?.message === "User login successfully.") {
-  //       toast.success("Login Successful", {
-  //         toastId: customId,
-  //       });
-  //       Navigate("/");
-  //     } else {
-  //       console.log("error response", response);
-  //       toast.error(
-  //         response.payload?.data?.message ||
-  //           "Mobile Number or Password Does Not Exist",
-  //         {
-  //           toastId: customId,
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     toast.error("An error occurred. Please try again.", {
-  //       toastId: customId,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
-  const [fileName, setFileName] = useState("");
-
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setFileName(file ? file.name : "");
-  };
   const handleBack = () => {
     Navigate("/student-select-qualification");
   };
@@ -168,10 +279,12 @@ const JobSeekerForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="job_role"
+                            value={jobSeekerForm.job_role}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
-                              value="gov. job"
+                              value="Gov. Job"
                               control={
                                 <Radio
                                   sx={{
@@ -185,7 +298,7 @@ const JobSeekerForm = () => {
                               label="Gov. Job"
                             />
                             <FormControlLabel
-                              value="private job"
+                              value="Private Job"
                               control={
                                 <Radio
                                   sx={{
@@ -199,7 +312,7 @@ const JobSeekerForm = () => {
                               label="Private Job"
                             />
                             <FormControlLabel
-                              value="self employment"
+                              value="Self Employment"
                               control={
                                 <Radio
                                   sx={{
@@ -230,7 +343,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="class_name"
+                          value={jobSeekerForm.class_name}
+                          onChange={handleChange}
                             placeholder="Please Enter Class Name"
                           />
                         </div>
@@ -243,7 +358,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="school_name"
+                          value={jobSeekerForm.school_name}
+                          onChange={handleChange}
                             placeholder="Please Enter School Name"
                           />
                         </div>
@@ -263,11 +380,15 @@ const JobSeekerForm = () => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width:"228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDate}
+                              onChange={handleDateChange}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -280,7 +401,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage"
+                            value={jobSeekerForm.parcentage}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>
@@ -302,7 +425,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="school_name_10th"
+                            value={jobSeekerForm.school_name_10th}
+                            onChange={handleChange}
                             placeholder="Please Enter School Name"
                           />
                         </div>
@@ -315,7 +440,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="board_10th"
+                            value={jobSeekerForm.board_10th}
+                            onChange={handleChange}
                             placeholder="Please Enter Board Name"
                           />
                         </div>
@@ -334,11 +461,15 @@ const JobSeekerForm = () => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width:"228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDateTenth}
+                              onChange={handleDateChangeTenth}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -351,8 +482,10 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
-                            placeholder="Please Enter Percentage %"
+                            name="parcentage_10th"
+                          value={jobSeekerForm.parcentage_10th}
+                          onChange={handleChange}
+                          placeholder="Please Enter Percentage %"
                           />
                         </div>
                       </div>
@@ -373,7 +506,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="school_name_12th"
+                            value={jobSeekerForm.school_name_12th}
+                            onChange={handleChange}
                             placeholder="Please Enter School Name"
                           />
                         </div>
@@ -386,7 +521,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="board_12th"
+                          value={jobSeekerForm.board_12th}
+                          onChange={handleChange}
                             placeholder="Please Enter Board Name"
                           />
                         </div>
@@ -405,11 +542,15 @@ const JobSeekerForm = () => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width:"228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDateTwelfth}
+                              onChange={handleDateChangeTwelfth}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -422,13 +563,34 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_12th"
+                            value={jobSeekerForm.parcentage_12th}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>
-                      </div>
+                        
+                        </div>
+
+                        <div className="mb-3 w-full flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <label
+                            htmlFor="dob"
+                            className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+                          >
+                           Subject
+                          </label>
+                          <TextField
+                            sx={{ width: "230px" }}
+                            name="subject_12th"
+                            value={jobSeekerForm.subject_12th}
+                            onChange={handleChange}
+                            placeholder="Please Enter Subject Name"
+                          />
+                        </div>
+                        </div>
                     </>
-                    <>
+                    {/* <>
                       <div className="flex justify-center items-center mb-6 mt-8">
                         <h1 className="text-center text-lg font-bold text-slate-600 ">
                           Class 12th
@@ -619,11 +781,11 @@ const JobSeekerForm = () => {
                           />
                         </div>
                       </div>
-                    </>
+                    </> */}
                     <>
                       <div className="flex justify-center items-center mb-6 mt-8">
                         <h1 className="text-center text-lg font-bold text-slate-600 ">
-                          Under Graduation
+                           Graduation
                         </h1>
                       </div>
                       <div className="mb-3 w-full flex justify-between items-center">
@@ -636,7 +798,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="institute_ug"
+                            value={jobSeekerForm.institute_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Institute Name"
                           />
                         </div>
@@ -649,7 +813,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="course_ug"
+                            value={jobSeekerForm.course_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Course Name"
                           />
                         </div>
@@ -668,11 +834,15 @@ const JobSeekerForm = () => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width:"228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDateUgdp}
+                              onChange={handleDateChangeUgdp}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -685,7 +855,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_ug"
+                            value={jobSeekerForm.parcentage_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>
@@ -707,7 +879,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="institute_pg"
+                            value={jobSeekerForm.institute_pg}
+                            onChange={handleChange}
                             placeholder="Please Enter Institute Name"
                           />
                         </div>
@@ -720,7 +894,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="course_pg"
+                            value={jobSeekerForm.course_pg}
+                            onChange={handleChange}
                             placeholder="Please Enter Course Name"
                           />
                         </div>
@@ -739,11 +915,15 @@ const JobSeekerForm = () => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width:"228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDatePg}
+                              onChange={handleDateChangePg}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -756,7 +936,9 @@ const JobSeekerForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_pg"
+                            value={jobSeekerForm.parcentage_pg}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>

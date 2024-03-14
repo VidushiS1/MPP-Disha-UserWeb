@@ -5,26 +5,31 @@ import { toast } from "react-toastify";
 
 const initialState = {
   loading: false,
-  addSignUpData: [],
+  addHobiesData: [],
   error: "",
 };
 
+const getTokenFromLocalStorage = () => {
+    const token = localStorage.getItem("token");
+    return token || "";
+  };
 
 
-export const addSignUpData = createAsyncThunk(
-  "signup/addSignUpData",
-  async (addSignUpData) => {
+export const addHobiesData = createAsyncThunk(
+  "signup/addHobiesData",
+  async (addHobiesData) => {
+    const config = {
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+          "Content-Type": "application/json",
+        },
+      };
     try {
       const response = await axios.post(
-        API_URL + "sign_up",
-        addSignUpData,
+        API_URL + "select-hobbys",
+        addHobiesData,config
       );
-      console.log("response",response);
-      if(response?.data){
-        localStorage.setItem("token", response?.data?.token);
-      }
       return response.data;
-     
     } catch (error) {
       console.error("An error occurred1:", error);
       console.error("An error occurred2:", error?.response);
@@ -37,20 +42,20 @@ export const addSignUpData = createAsyncThunk(
   }
 );
 
-const addSignUpDataSlice = createSlice({
-  name: "addSignUpData",
+const addHobiesDataSlice = createSlice({
+  name: "addHobiesData",
   initialState,
   extraReducers: (builder) => {
     // ----------------------------------------------------
-    builder.addCase(addSignUpData.pending, (state) => {
+    builder.addCase(addHobiesData.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(addSignUpData.fulfilled, (state, action) => {
+    builder.addCase(addHobiesData.fulfilled, (state, action) => {
       state.loading = false;
       state.users = action.payload;
       state.error = "";
     });
-    builder.addCase(addSignUpData.rejected, (state, action) => {
+    builder.addCase(addHobiesData.rejected, (state, action) => {
       state.loading = false;
       state.users = [];
       state.error = action.error.message;
@@ -60,4 +65,4 @@ const addSignUpDataSlice = createSlice({
 
 
 
-export default addSignUpDataSlice.reducer;
+export default addHobiesDataSlice.reducer;

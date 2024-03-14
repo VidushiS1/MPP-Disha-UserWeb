@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/post-graduation.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField ,Checkbox} from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -19,8 +19,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-
+import dayjs from "dayjs";
 import { Link, useNavigate } from "react-router-dom";
+import {addUnderGraduationData} from "../../../rtk/features/RegistrationForm/addUnderGraduationDataSlice"
+
 
 const buttonStyles = {
   padding: "10px",
@@ -39,76 +41,203 @@ const UnderGraduationForm = () => {
   const dispatch = useDispatch();
   const customId = "custom-id-yes";
   const Navigate = useNavigate();
-
-  const [fromDetail, setFormDetail] = useState({
-    mobile_no: "",
-    password: "",
-    fcm_token: "fdugihjhgydfijlkui0789i",
-  });
-  console.log("fromDetail", fromDetail);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const loginDetailsHandler = (e) => {
-    const { name, value } = e.target;
-
-    setFormDetail((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = () => {
-    Navigate("/student-hobbies");
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!fromDetail.mobile_no || !fromDetail.password) {
-  //     toast.error("Mobile Number and password are required", {
-  //       toastId: customId,
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await dispatch(loginFormData(fromDetail));
-  //     console.log("success response", response);
-  //     if (response.payload?.data?.message === "User login successfully.") {
-  //       toast.success("Login Successful", {
-  //         toastId: customId,
-  //       });
-  //       Navigate("/");
-  //     } else {
-  //       console.log("error response", response);
-  //       toast.error(
-  //         response.payload?.data?.message ||
-  //           "Mobile Number or Password Does Not Exist",
-  //         {
-  //           toastId: customId,
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     toast.error("An error occurred. Please try again.", {
-  //       toastId: customId,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  const dateFormat = "YYYY";
+  const [isFieldDisabled, setIsFieldDisabled] = useState(false);
+  const maxDate = dayjs().subtract(0, "day");
   const [fileName, setFileName] = useState("");
-
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setFileName(file ? file.name : "");
+  const [fileNameUgdp, setFileNameUgdp] = useState("");
+  const [fileNameTwelfth, setFileNameTwelfth] = useState("");
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDateTwelfth, setSelectedDateTwelfth] = useState(
+    dayjs( dateFormat)
+  );
+  const [selectedDateUgdp, setSelectedDateUgdp] = useState(
+    dayjs( dateFormat)
+  );
+  const getTokenFromLocalStorage = () => {
+    const student_id = localStorage.getItem("student_id");
+    return student_id || "";
   };
+
+
+
+
+
+
+
+  const [classUgdpInfoForm,setclassUgdpInfoForm] = useState({
+    student_id:getTokenFromLocalStorage(),
+    achivement_10th:"",
+    education_mode_10th:"",
+    parcentage_10th:"",
+    passing_year_10th:"" ,
+    education_medium_10th:"",
+    school_name_10th:"",
+    board_10th:"" ,
+    achivement_12th:"" ,
+    education_mode_12th:"" ,
+    passing_year_12th:"" ,
+    parcentage_12th:"" ,
+    education_medium_12th:"" ,
+    board_12th:"" ,
+    school_name_12th:"" ,
+    institute_ug:"",
+    course_ug:"",
+    education_medium_ug:"",
+    achivement_ug:"",
+    education_mode_ug:"",
+    pursuing_ug:"",
+    passing_year_ug:"",
+    parcentage_ug:""
+  })
+
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setclassUgdpInfoForm({
+      ...classUgdpInfoForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
+  };
+
+  const handleDateChangeUgdp = (newValue) => {
+    setSelectedDateUgdp(newValue);
+  };
+
+  const handleDateChangeTwelfth = (newValue) => {
+    setSelectedDateTwelfth(newValue);
+  };
+
+ const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    console.log("file",file);
+    setFileName(file);
+  };
+
+  const handleTwelfthFileInputChange = (event) => {
+    const file = event.target.files[0];
+    console.log("file1",file);
+    setFileNameTwelfth(file);
+  };
+
+  const handleUgdpFileInputChange = (event) => {
+    const file = event.target.files[0];
+    console.log("file2",file);
+    setFileNameUgdp(file);
+  };
+
+  useEffect(() => {
+    setclassUgdpInfoForm((prevFormValue) => ({
+      ...prevFormValue,
+      passing_year_10th: selectedDate?.format(dateFormat),
+      achivement_10th:fileName,
+      passing_year_12th: selectedDateTwelfth?.format(dateFormat),
+      achivement_12th:fileNameTwelfth,
+      passing_year_ug: selectedDateUgdp?.format(dateFormat),
+      achivement_ug:fileNameUgdp,
+    }));
+  }, [selectedDate,fileName,selectedDateTwelfth,fileNameUgdp,fileNameUgdp,selectedDateUgdp]);
+
+
+  const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th","education_mode_12th","education_medium_12th","board_12th","school_name_12th","institute_ug","course_ug","education_medium_ug","education_mode_ug"];
+
+
+  
+
+
+  console.log("classUgdpInfoForm",classUgdpInfoForm);
+
+
+  const handleRadioChange = () => {
+    setIsFieldDisabled((prevState) => !prevState);
+  };
+
+useEffect(()=>{
+  if(isFieldDisabled){
+    setSelectedDateUgdp(null);
+    setclassUgdpInfoForm({
+      ...classUgdpInfoForm,
+      passing_year_ug:"",
+      parcentage_ug:"",
+      pursuing_ug:isFieldDisabled
+    })
+  }
+  else if(classUgdpInfoForm?.parcentage_ug || classUgdpInfoForm?.passing_year_ug ){
+    setclassUgdpInfoForm({
+      ...classUgdpInfoForm,
+      pursuing_ug:false
+    })
+  }
+
+},[isFieldDisabled,classUgdpInfoForm?.parcentage_ug,classUgdpInfoForm?.passing_year_ug])
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
+
+    const hasEmptyFields = requiredField.some(
+      (fields) => !classUgdpInfoForm[fields]
+    );
+    if (hasEmptyFields) {
+      toast.error("Please fill all the required fields", {
+        toastId: customId,
+      });
+      return;
+    }
+
+    if (classUgdpInfoForm?.passing_year_10th === "Invalid Date" || classUgdpInfoForm?.passing_year_12th === "Invalid Date") {
+      toast.error("Please Select the year of Passing.", {
+        toastId: customId,
+      });
+      return;
+    }
+
+    if (classUgdpInfoForm?.pursuing_ug === false && classUgdpInfoForm?.passing_year_ug === "Invalid Date") {
+      toast.error("Please Select the year of Passing.", {
+        toastId: customId,
+      });
+      return;
+    }
+
+    if (classUgdpInfoForm?.pursuing_ug === false && classUgdpInfoForm?.parcentage_ug === "") {
+      toast.error("Please fill the percentage field", {
+        toastId: customId,
+      });
+      return;
+    }
+
+
+    const formData = new FormData();
+      for (const key in classUgdpInfoForm) {
+      formData.append(key, classUgdpInfoForm[key]);
+    }
+
+    const actionResult = await dispatch(addUnderGraduationData(formData));
+    if (actionResult?.payload?.message) {
+      setLoading(false);
+      toast.success(actionResult?.payload?.message, { toastId: customId });
+      Navigate("/student-hobbies");
+    }
+  } catch (error) {
+    console.log("error", error);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+
   const handleBack = () => {
     Navigate("/student-select-qualification");
   };
@@ -173,7 +302,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="school_name_10th"
+                            value={classUgdpInfoForm.school_name_10th}
+                            onChange={handleChange}
                             placeholder="Please Enter School Name"
                           />
                         </div>
@@ -186,7 +317,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="board_10th"
+                            value={classUgdpInfoForm.board_10th}
+                            onChange={handleChange}
                             placeholder="Please Enter Board Name"
                           />
                         </div>
@@ -202,7 +335,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_medium_10th"
+                            value={classUgdpInfoForm.education_medium_10th}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="english"
@@ -254,6 +389,9 @@ const UnderGraduationForm = () => {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDate}
+                              onChange={handleDateChange}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -266,7 +404,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_10th"
+                            value={classUgdpInfoForm.parcentage_10th}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>
@@ -282,7 +422,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_mode_10th"
+                            value={classUgdpInfoForm.education_mode_10th}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="regular"
@@ -337,7 +479,7 @@ const UnderGraduationForm = () => {
                                 />
                               ),
                             }}
-                            value={fileName}
+                            value={fileName?.name}
                             disabled
                           />
                           <input
@@ -365,7 +507,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="school_name_12th"
+                            value={classUgdpInfoForm.school_name_12th}
+                            onChange={handleChange}
                             placeholder="Please Enter School Name"
                           />
                         </div>
@@ -378,7 +522,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="board_12th"
+                            value={classUgdpInfoForm.board_12th}
+                            onChange={handleChange}
                             placeholder="Please Enter Board Name"
                           />
                         </div>
@@ -394,7 +540,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_medium_12th"
+                            value={classUgdpInfoForm.education_medium_12th}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="english"
@@ -446,6 +594,9 @@ const UnderGraduationForm = () => {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDateTwelfth}
+                              onChange={handleDateChangeTwelfth}
+                              maxDate={maxDate}
                             />
                           </LocalizationProvider>
                         </div>
@@ -458,7 +609,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_12th"
+                            value={classUgdpInfoForm.parcentage_12th}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
                           />
                         </div>
@@ -474,7 +627,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_mode_12th"
+                            value={classUgdpInfoForm.education_mode_12th}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="regular"
@@ -523,20 +678,20 @@ const UnderGraduationForm = () => {
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
                                     document
-                                      .getElementById("fileInput")
+                                      .getElementById("fileInput12th")
                                       .click();
                                   }}
                                 />
                               ),
                             }}
-                            value={fileName}
+                            value={fileNameTwelfth?.name}
                             disabled
                           />
                           <input
-                            id="fileInput"
+                            id="fileInput12th"
                             type="file"
                             style={{ display: "none" }}
-                            onChange={handleFileInputChange}
+                            onChange={handleTwelfthFileInputChange}
                           />
                         </div>
                       </div>
@@ -557,7 +712,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="institute_ug"
+                            value={classUgdpInfoForm.institute_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Institute Name"
                           />
                         </div>
@@ -570,7 +727,9 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "228px" }}
-                            id=""
+                            name="course_ug"
+                            value={classUgdpInfoForm.course_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Course Name"
                           />
                         </div>
@@ -586,7 +745,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_medium_ug"
+                            value={classUgdpInfoForm.education_medium_ug}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="english"
@@ -619,36 +780,29 @@ const UnderGraduationForm = () => {
                           </RadioGroup>
                         </div>
                       </div>
-                      <div className="mb-3 w-full flex justify-between items-center">
-                        <div className="flex flex-col">
-                          <label
-                            htmlFor="name"
-                            className="block text-sm font-medium leading-6 text-gray-900 mb-1"
-                          >
-                            Currently Pursuing
-                          </label>
-                          <RadioGroup
-                            row
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                          >
-                            <FormControlLabel
-                              value="Currently Pursuing"
-                              control={
-                                <Radio
-                                  sx={{
+                      <div className="mb-1 w-full flex justify-between items-center">
+                      <div className="flex flex-col">
+                        <div className="flex justify-start items-center">
+                       <Checkbox
+                                sx={{
+                                  color: "#AC885A",
+                                  marginLeft:"-0.7rem",
+                                  "&.Mui-checked": {
                                     color: "#AC885A",
-                                    "&.Mui-checked": {
-                                      color: "#AC885A",
-                                    },
-                                  }}
-                                />
-                              }
-                              label="Currently Pursuing"
-                            />
-                          </RadioGroup>
-                        </div>
+                                  },
+                                }}
+                                checked={isFieldDisabled}
+                                onChange={handleRadioChange}
+                              />
+                               <label
+                              htmlFor="name"
+                              className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+                            >
+                              Currently Pursuing 
+                            </label>
+                              </div>
                       </div>
+                    </div>
                       <div className="mb-3 w-full flex justify-between items-center">
                         <div className="flex flex-col">
                           <label
@@ -668,6 +822,10 @@ const UnderGraduationForm = () => {
                                   color: "#AC885A",
                                 },
                               }}
+                              value={selectedDateUgdp}
+                              onChange={handleDateChangeUgdp}
+                              maxDate={maxDate}
+                              disabled={isFieldDisabled}
                             />
                           </LocalizationProvider>
                         </div>
@@ -680,8 +838,11 @@ const UnderGraduationForm = () => {
                           </label>
                           <TextField
                             sx={{ width: "220px" }}
-                            id=""
+                            name="parcentage_ug"
+                            value={classUgdpInfoForm.parcentage_ug}
+                            onChange={handleChange}
                             placeholder="Please Enter Percentage %"
+                            disabled={isFieldDisabled}
                           />
                         </div>
                       </div>
@@ -696,7 +857,9 @@ const UnderGraduationForm = () => {
                           <RadioGroup
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
+                            name="education_mode_ug"
+                            value={classUgdpInfoForm.education_mode_ug}
+                            onChange={handleChange}
                           >
                             <FormControlLabel
                               value="regular"
@@ -745,20 +908,20 @@ const UnderGraduationForm = () => {
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
                                     document
-                                      .getElementById("fileInput")
+                                      .getElementById("fileInputUgdp")
                                       .click();
                                   }}
                                 />
                               ),
                             }}
-                            value={fileName}
+                            value={fileNameUgdp?.name}
                             disabled
                           />
                           <input
-                            id="fileInput"
+                            id="fileInputUgdp"
                             type="file"
                             style={{ display: "none" }}
-                            onChange={handleFileInputChange}
+                            onChange={handleUgdpFileInputChange}
                           />
                         </div>
                       </div>

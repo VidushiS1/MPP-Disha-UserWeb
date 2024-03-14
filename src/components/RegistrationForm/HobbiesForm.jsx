@@ -56,6 +56,7 @@ import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined";
 import ComputerOutlinedIcon from "@mui/icons-material/ComputerOutlined";
 import OutdoorGrillOutlinedIcon from "@mui/icons-material/OutdoorGrillOutlined";
 import { Link, useNavigate } from "react-router-dom";
+import {addHobiesData} from "../../../rtk/features/RegistrationForm/addHobiesDataSlice"
 
 const buttonStyles = {
   padding: "10px",
@@ -71,8 +72,10 @@ const buttonStyles = {
   width: "50%",
 };
 const HobbiesForm = () => {
-    const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
+  const navigate = useNavigate();
+  const customId = "custom-id-yes";
     const hobbies = [
       {
         name: "Academic Projects",
@@ -224,10 +227,70 @@ const HobbiesForm = () => {
       },
     ];
 
-  
+  //   const handleHobbySelect = (hobbyName) => {
+  //   if (selectedHobbies.includes(hobbyName)) {
+  //     setSelectedHobbies(selectedHobbies.filter((hobby) => hobby !== hobbyName));
+  //   } else {
+  //     if (selectedHobbies.length < 3) {
+  //       setSelectedHobbies([...selectedHobbies, hobbyName]);
+  //     }
+  //   }
+  // };
 
-  const handleSubmit = () => {
-    Navigate("/student-select-qualification");
+console.log("selectedHobbies",selectedHobbies);
+
+
+
+const handleHobbySelect = (hobbyName) => {
+  if (selectedHobbies.includes(hobbyName)) {
+    setSelectedHobbies(selectedHobbies.filter((hobby) => hobby !== hobbyName));
+  } else {
+    if (selectedHobbies.length < 3) {
+      setSelectedHobbies([...selectedHobbies, hobbyName]);
+    } else {
+      // You can provide feedback here that only three hobbies can be selected
+      // For example, displaying a toast message
+      toast.error("You can select only three hobbies.");
+    }
+  }
+};
+const dispatch = useDispatch();
+
+
+const getTokenFromLocalStorage = () => {
+  const student_id = localStorage.getItem("student_id");
+  return student_id || "";
+};
+
+const hobbyObj = {
+  student_id:getTokenFromLocalStorage(),
+  hobbys:selectedHobbies
+}
+
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    if (selectedHobbies?.length === 0) {
+      toast.error("Please select at least one hobby",{toastId:customId});
+      return;
+    }
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(addHobiesData(hobbyObj));
+        console.log("actionResult",actionResult);
+        if(actionResult?.payload?.message){
+          setLoading(false);
+          toast.success("Sign up successful.",{toastId:customId});
+          navigate("/");
+        }
+      } catch (error) {
+        console.log("error while adding hobbies",error);
+      }finally{
+        setLoading(false);
+      }
+     
+  
+  
   };
 
  
@@ -260,6 +323,7 @@ const HobbiesForm = () => {
                         background: "#AC885A",
                       },
                     }}
+                    onClick={()=>navigate("/student-select-qualification")}
                   >
                     <KeyboardBackspaceIcon sx={{ color: "#FFF" }} />
                   </IconButton>
@@ -283,44 +347,46 @@ const HobbiesForm = () => {
                       </div>
                     </>
                     <>
-                      <div class="grid grid-cols-3 gap-4 mb-3">
+                      <div className="grid grid-cols-3 gap-4 mb-3">
                         {hobbies.map((hobby, index) => (
                           <div
                             className="hobbies-button-area-layaout"
                             key={index}
                           >
-                            <Button
-                              fullWidth
-                              variant="outlined"
-                              startIcon={hobby.icon}
-                              sx={{
-                                padding: "5px 10px",
-                                height: "100%",
-                                textTransform: "capitalize",
-                                borderColor: "#AC885A",
-                                color: "#AC885A",
-                                fontSize: "0.85rem",
-                                lineHeight: 1.3,
-                                "&:hover": {
-                                  borderColor: "#AC885A",
-                                  backgroundColor: "#AC885A",
-                                  color: "#FFF",
-                                  "& .MuiSvgIcon-root": {
-                                    color: "#FFF",
-                                  },
-                                },
-                                "&:active": {
-                                  borderColor: "#AC885A",
-                                  backgroundColor: "#AC885A",
-                                  color: "#FFF",
-                                  "& .MuiSvgIcon-root": {
-                                    color: "#FFF",
-                                  },
-                                },
-                              }}
-                            >
-                              {hobby.name}
-                            </Button>
+                        <Button
+  fullWidth
+  variant={selectedHobbies.includes(hobby.name) ? "contained" : "outlined"}
+  startIcon={React.cloneElement(hobby.icon, {
+    sx: {
+      color: selectedHobbies.includes(hobby.name) ? "#FFF" : "#AC885A",
+    },
+  })}
+  sx={{
+    padding: "5px 10px",
+    height: "100%",
+    textTransform: "capitalize",
+    borderColor: "#AC885A",
+    color: selectedHobbies.includes(hobby.name) ? "#FFF" : "#AC885A",
+    backgroundColor: selectedHobbies.includes(hobby.name) ? "#AC885A" : "transparent",
+    fontSize: "0.85rem",
+    lineHeight: 1.3,
+    "&:hover": {
+      borderColor: "#AC885A",
+      backgroundColor: "#AC885A",
+      color: "#FFF",
+    },
+    "&:active": {
+      borderColor: "#AC885A",
+      backgroundColor: "#AC885A",
+      color: "#FFF",
+    },
+  }}
+  onClick={() => handleHobbySelect(hobby.name)}
+>
+  {hobby.name}
+</Button>
+
+
                           </div>
                         ))}
                       </div>

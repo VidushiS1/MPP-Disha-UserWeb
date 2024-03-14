@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/BelowTenthForm.gif";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -16,9 +16,9 @@ import { YearCalendar } from "@mui/x-date-pickers/YearCalendar";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import dayjs from "dayjs";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import {addBelowTenthData} from "../../../rtk/features/RegistrationForm/addBelowTenthDataSlice"
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -39,79 +39,123 @@ const BelowTenthForm = () => {
   const dispatch = useDispatch();
   const customId = "custom-id-yes";
   const Navigate = useNavigate();
-
-  const [fromDetail, setFormDetail] = useState({
-    mobile_no: "",
-    password: "",
-    fcm_token: "fdugihjhgydfijlkui0789i",
-  });
-  console.log("fromDetail", fromDetail);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dateFormat = "YYYY";
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs( dateFormat)
+  );
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const getTokenFromLocalStorage = () => {
+    const student_id = localStorage.getItem("student_id");
+    return student_id || "";
   };
 
-  const loginDetailsHandler = (e) => {
-    const { name, value } = e.target;
+  const [belowTenthInfoForm,setbelowTenthInfoForm] = useState({
+    student_id:getTokenFromLocalStorage(),
+    achivement:"",
+    education_mode:"",
+    education_medium:"",
+    parcentage:"",
+    passing_year:"" ,
+    school_name:"",
+    class_name:"" ,
+  })
 
-    setFormDetail((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setbelowTenthInfoForm({
+      ...belowTenthInfoForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const handleSubmit = () => {
-    Navigate("/student-hobbies");
+
+
+
+
+ 
+
+
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!fromDetail.mobile_no || !fromDetail.password) {
-  //     toast.error("Mobile Number and password are required", {
-  //       toastId: customId,
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await dispatch(loginFormData(fromDetail));
-  //     console.log("success response", response);
-  //     if (response.payload?.data?.message === "User login successfully.") {
-  //       toast.success("Login Successful", {
-  //         toastId: customId,
-  //       });
-  //       Navigate("/");
-  //     } else {
-  //       console.log("error response", response);
-  //       toast.error(
-  //         response.payload?.data?.message ||
-  //           "Mobile Number or Password Does Not Exist",
-  //         {
-  //           toastId: customId,
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     toast.error("An error occurred. Please try again.", {
-  //       toastId: customId,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const maxDate = dayjs().subtract(0, "day");
 
   const [fileName, setFileName] = useState("");
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
-    setFileName(file ? file.name : "");
+    setFileName(file);
   };
+
+  useEffect(() => {
+    setbelowTenthInfoForm((prevFormValue) => ({
+      ...prevFormValue,
+      passing_year: selectedDate?.format(dateFormat),
+      achivement:fileName
+    }));
+  }, [selectedDate,fileName]);
+
   const handleBack = () => {
     Navigate("/student-select-qualification");
+  }
+
+
+
+  const requiredField = ["student_id","education_mode","parcentage","passing_year","education_medium","class_name","school_name",];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+  
+
+  
+      const hasEmptyFields = requiredField.some(
+        (fields) => !belowTenthInfoForm[fields]
+      );
+      if (hasEmptyFields) {
+        toast.error("Please fill all the required fields", {
+          toastId: customId,
+        });
+        return;
+      }
+  
+      if (belowTenthInfoForm?.passing_year === "Invalid Date") {
+        toast.error("Please Select the year of Passing.", {
+          toastId: customId,
+        });
+        return;
+      }
+      const formData = new FormData();
+  
+      // Append each key-value pair from belowTenthInfoForm to formData
+      for (const key in belowTenthInfoForm) {
+        formData.append(key, belowTenthInfoForm[key]);
+      }
+      const actionResult = await dispatch(addBelowTenthData(formData));
+      if (actionResult?.payload?.message) {
+        setLoading(false);
+        toast.success(actionResult?.payload?.message, { toastId: customId });
+        Navigate("/student-hobbies");
+      }
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
+  
+
+
+  console.log("belowTenthInfoForm",belowTenthInfoForm);
+  // const handleBack = () => {
+  //   Navigate("/student-select-qualification");
+  // };
 
   return (
     <>
@@ -167,8 +211,10 @@ const BelowTenthForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
                           placeholder="Please Enter Class Name"
+                          name="class_name"
+                          value={belowTenthInfoForm.class_name}
+                          onChange={handleChange}
                         />
                       </div>
                       <div className="flex flex-col">
@@ -180,7 +226,9 @@ const BelowTenthForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="school_name"
+                          value={belowTenthInfoForm.school_name}
+                          onChange={handleChange}
                           placeholder="Please Enter School Name"
                         />
                       </div>
@@ -196,7 +244,9 @@ const BelowTenthForm = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="education_medium"
+                          value={belowTenthInfoForm.education_medium}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
                             value="english"
@@ -248,6 +298,9 @@ const BelowTenthForm = () => {
                                 color: "#AC885A",
                               },
                             }}
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            maxDate={maxDate}
                           />
                         </LocalizationProvider>
                       </div>
@@ -260,7 +313,9 @@ const BelowTenthForm = () => {
                         </label>
                         <TextField
                           sx={{ width: "220px" }}
-                          id=""
+                          name="parcentage"
+                          value={belowTenthInfoForm.parcentage}
+                          onChange={handleChange}
                           placeholder="Please Enter Percentage %"
                         />
                       </div>
@@ -276,7 +331,9 @@ const BelowTenthForm = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="education_mode"
+                          value={belowTenthInfoForm.education_mode}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
                             value="regular"
@@ -329,7 +386,7 @@ const BelowTenthForm = () => {
                               />
                             ),
                           }}
-                          value={fileName}
+                          value={fileName?.name}
                           disabled
                         />
                         <input

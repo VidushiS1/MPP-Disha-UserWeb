@@ -5,26 +5,31 @@ import { toast } from "react-toastify";
 
 const initialState = {
   loading: false,
-  addSignUpData: [],
+  addUnderGraduationDiplomaData: [],
   error: "",
 };
 
+const getTokenFromLocalStorage = () => {
+    const token = localStorage.getItem("token");
+    return token || "";
+  };
 
 
-export const addSignUpData = createAsyncThunk(
-  "signup/addSignUpData",
-  async (addSignUpData) => {
+export const addUnderGraduationDiplomaData = createAsyncThunk(
+  "signup/addUnderGraduationDiplomaData",
+  async (addUnderGraduationDiplomaData) => {
+    const config2 = {
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+          "Content-Type": "multipart/form-data",
+        },
+      };
     try {
       const response = await axios.post(
-        API_URL + "sign_up",
-        addSignUpData,
+        API_URL + "ug-diploma-qualification",
+        addUnderGraduationDiplomaData,config2
       );
-      console.log("response",response);
-      if(response?.data){
-        localStorage.setItem("token", response?.data?.token);
-      }
       return response.data;
-     
     } catch (error) {
       console.error("An error occurred1:", error);
       console.error("An error occurred2:", error?.response);
@@ -37,20 +42,20 @@ export const addSignUpData = createAsyncThunk(
   }
 );
 
-const addSignUpDataSlice = createSlice({
-  name: "addSignUpData",
+const addUnderGraduationDiplomaDataSlice = createSlice({
+  name: "addUnderGraduationDiplomaData",
   initialState,
   extraReducers: (builder) => {
     // ----------------------------------------------------
-    builder.addCase(addSignUpData.pending, (state) => {
+    builder.addCase(addUnderGraduationDiplomaData.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(addSignUpData.fulfilled, (state, action) => {
+    builder.addCase(addUnderGraduationDiplomaData.fulfilled, (state, action) => {
       state.loading = false;
       state.users = action.payload;
       state.error = "";
     });
-    builder.addCase(addSignUpData.rejected, (state, action) => {
+    builder.addCase(addUnderGraduationDiplomaData.rejected, (state, action) => {
       state.loading = false;
       state.users = [];
       state.error = action.error.message;
@@ -60,4 +65,4 @@ const addSignUpDataSlice = createSlice({
 
 
 
-export default addSignUpDataSlice.reducer;
+export default addUnderGraduationDiplomaDataSlice.reducer;

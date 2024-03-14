@@ -122,7 +122,7 @@ const QualificationForm = () => {
   };
 
   const handleClassTwelfth = () => {
-    Navigate("/student-class-twekfth");
+    Navigate("/student-class-twelfth");
   };
 
    const handleUnderGraduationDiploma = () => {
@@ -169,6 +169,7 @@ const QualificationForm = () => {
                         background: "#AC885A",
                       },
                     }}
+                    onClick={()=>Navigate("/student-registration-information-form")}
                   >
                     <KeyboardBackspaceIcon sx={{ color: "#FFF" }} />
                   </IconButton>

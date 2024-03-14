@@ -116,72 +116,72 @@ const loginDetailsHandler = (e) =>{
 
 const requiredField = ["name","email","employee_id","mobile_no","city","password","confirm_password"]
 
-const handleSubmit = () => {
-  Navigate("/student-registration-information-form");
-}
+// const handleSubmit = () => {
+//   Navigate("/student-registration-information-form");
+// }
 
-// const handleSubmit = async (e) => {
-//     e.preventDefault();
+const handleSubmit = async (e) => {
+    e.preventDefault();
     
-//     // Required fields check
-//     const hasEmptyFields = requiredField.some((field) => !fromDetail[field]);
-//     if (hasEmptyFields) {
-//       toast.error("Please fill all the required fields", {
-//         toastId: customId,
-//       });
-//       return;
-//     }
+    // Required fields check
+    const hasEmptyFields = requiredField.some((field) => !fromDetail[field]);
+    if (hasEmptyFields) {
+      toast.error("Please fill all the required fields", {
+        toastId: customId,
+      });
+      return;
+    }
 
-//     if (fromDetail.mobile_no?.length !== 10) {
-//         toast.error("Please enter a 10-digit mobile number", {
-//             toastId: customId,
-//         });
-//         return;
-//     }
+    if (fromDetail.mobile_no?.length !== 10) {
+        toast.error("Please enter a 10-digit mobile number", {
+            toastId: customId,
+        });
+        return;
+    }
   
-//     // Password and confirm password match check
-//     if (fromDetail.password !== fromDetail.confirm_password) {
-//       toast.error("Passwords and confirm password do not match", {
-//         toastId: customId,
-//       });
-//       return;
-//     }
+    // Password and confirm password match check
+    if (fromDetail.password !== fromDetail.confirm_password) {
+      toast.error("Passwords and confirm password do not match", {
+        toastId: customId,
+      });
+      return;
+    }
 
-//     if (fromDetail.password.length < 8 || fromDetail.confirm_password.length < 8) {
-//         toast.error("Password and confirm password should be at least 8 characters long", {
-//             toastId: customId,
-//         });
-//         return;
-//     }
+    if (fromDetail.password.length < 8 || fromDetail.confirm_password.length < 8) {
+        toast.error("Password and confirm password should be at least 8 characters long", {
+            toastId: customId,
+        });
+        return;
+    }
 
 
-//     // Email validation using regex
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     if (!emailRegex.test(fromDetail.email)) {
-//       toast.error("Please enter a valid email address", {
-//         toastId: customId,
-//       });
-//       return;
-//     }
+    // Email validation using regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(fromDetail.email)) {
+      toast.error("Please enter a valid email address", {
+        toastId: customId,
+      });
+      return;
+    }
   
-//     try {
-//       setLoading(true);
-//       const response = await dispatch(addSignUpData(fromDetail));
-//       console.log("success response", response);
-//       if (response.payload?.message === "User signed up successfully.") {
-//         toast.success(response.payload?.message, {
-//           toastId: customId,
-//         });
-//         Navigate("/login");
-//       }
-//     } catch (error) {
-//       toast.error("An error occurred. Please try again.", {
-//         toastId: customId,
-//       });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+    try {
+      setLoading(true);
+      const response = await dispatch(addSignUpData(fromDetail));
+      console.log("success response", response);
+      if (response.payload?.message === "User signed up successfully.") {
+        toast.success(response.payload?.message, {
+          toastId: customId,
+        });
+        Navigate("/student-registration-information-form");
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.", {
+        toastId: customId,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
 
   return (

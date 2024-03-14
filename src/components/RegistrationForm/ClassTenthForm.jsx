@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/ClassTenthForm.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
+import { Button, Checkbox, CircularProgress, IconButton, TextField } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -16,11 +16,10 @@ import { YearCalendar } from "@mui/x-date-pickers/YearCalendar";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import dayjs from "dayjs";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-
 import { Link, useNavigate } from "react-router-dom";
+import {addTenthData} from "../../../rtk/features/RegistrationForm/addTenthDataSlice"
 
 const buttonStyles = {
   padding: "10px",
@@ -39,79 +38,148 @@ const handleClassTenth = () => {
   const dispatch = useDispatch();
   const customId = "custom-id-yes";
   const Navigate = useNavigate();
-
-  const [fromDetail, setFormDetail] = useState({
-    mobile_no: "",
-    password: "",
-    fcm_token: "fdugihjhgydfijlkui0789i",
-  });
-  console.log("fromDetail", fromDetail);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const loginDetailsHandler = (e) => {
-    const { name, value } = e.target;
-
-    setFormDetail((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
- const handleSubmit = () => {
-   Navigate("/student-hobbies");
- };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!fromDetail.mobile_no || !fromDetail.password) {
-  //     toast.error("Mobile Number and password are required", {
-  //       toastId: customId,
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await dispatch(loginFormData(fromDetail));
-  //     console.log("success response", response);
-  //     if (response.payload?.data?.message === "User login successfully.") {
-  //       toast.success("Login Successful", {
-  //         toastId: customId,
-  //       });
-  //       Navigate("/");
-  //     } else {
-  //       console.log("error response", response);
-  //       toast.error(
-  //         response.payload?.data?.message ||
-  //           "Mobile Number or Password Does Not Exist",
-  //         {
-  //           toastId: customId,
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     toast.error("An error occurred. Please try again.", {
-  //       toastId: customId,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  const dateFormat = "YYYY";
+  const [isFieldDisabled, setIsFieldDisabled] = useState(false);
+  const maxDate = dayjs().subtract(0, "day");
   const [fileName, setFileName] = useState("");
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs( dateFormat)
+  );
 
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setFileName(file ? file.name : "");
+  const getTokenFromLocalStorage = () => {
+    const student_id = localStorage.getItem("student_id");
+    return student_id || "";
   };
+
+  const [classTenthInfoForm,setclassTenthInfoForm] = useState({
+    student_id:getTokenFromLocalStorage(),
+    achivement_10th:"",
+    education_mode_10th:"",
+    parcentage_10th:"",
+    passing_year_10th:"" ,
+    education_medium_10th:"",
+    school_name_10th:"",
+    board_10th:"" ,
+  })
+
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setclassTenthInfoForm({
+      ...classTenthInfoForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleDateChange = (newValue) => {
+    setSelectedDate(newValue);
+  };
+
+ const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    setFileName(file);
+  };
+
+  useEffect(() => {
+    setclassTenthInfoForm((prevFormValue) => ({
+      ...prevFormValue,
+      passing_year_10th: selectedDate?.format(dateFormat),
+      achivement_10th:fileName
+    }));
+  }, [selectedDate,fileName]);
+
   const handleBack = () => {
     Navigate("/student-select-qualification");
+  }
+
+
+
+  const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th",];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+  
+     
+  
+      const hasEmptyFields = requiredField.some(
+        (fields) => !classTenthInfoForm[fields]
+      );
+      if (hasEmptyFields) {
+        toast.error("Please fill all the required fields", {
+          toastId: customId,
+        });
+        return;
+      }
+  
+      if (classTenthInfoForm?.pursuing_10th === false && classTenthInfoForm?.passing_year_10th === "Invalid Date") {
+        toast.error("Please Select the year of Passing.", {
+          toastId: customId,
+        });
+        return;
+      }
+  
+      if (classTenthInfoForm?.pursuing_10th === false && classTenthInfoForm?.parcentage_10th === "") {
+        toast.error("Please fill the percentage 10th field", {
+          toastId: customId,
+        });
+        return;
+      }
+
+      const formData = new FormData();
+  
+      // Append each key-value pair from classTenthInfoForm to formData
+      for (const key in classTenthInfoForm) {
+        formData.append(key, classTenthInfoForm[key]);
+      }
+  
+      const actionResult = await dispatch(addTenthData(formData));
+      if (actionResult?.payload?.message) {
+        setLoading(false);
+        toast.success(actionResult?.payload?.message, { toastId: customId });
+        Navigate("/student-hobbies");
+      }
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
+  
+
+
+  console.log("classTenthInfoForm",classTenthInfoForm);
+
+
+  const handleRadioChange = () => {
+    setIsFieldDisabled((prevState) => !prevState);
+  };
+
+useEffect(()=>{
+  if(isFieldDisabled){
+    setSelectedDate(null)
+    setclassTenthInfoForm({
+      ...classTenthInfoForm,
+      passing_year_10th:"",
+      parcentage_10th:"",
+      pursuing_10th:isFieldDisabled
+    })
+  }
+  else if(classTenthInfoForm?.parcentage_10th || classTenthInfoForm?.passing_year_10th ){
+    setclassTenthInfoForm({
+      ...classTenthInfoForm,
+      pursuing_10th:false
+    })
+  }
+
+},[isFieldDisabled,classTenthInfoForm?.parcentage_10th,classTenthInfoForm?.passing_year_10th])
+
+
+
 
   return (
     <>
@@ -167,7 +235,9 @@ const handleClassTenth = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="school_name_10th"
+                          value={classTenthInfoForm.school_name_10th}
+                          onChange={handleChange}
                           placeholder="Please Enter School Name"
                         />
                       </div>
@@ -180,7 +250,9 @@ const handleClassTenth = () => {
                         </label>
                         <TextField
                           sx={{ width: "228px" }}
-                          id=""
+                          name="board_10th"
+                          value={classTenthInfoForm.board_10th}
+                          onChange={handleChange}
                           placeholder="Please Enter Board Name"
                         />
                       </div>
@@ -196,7 +268,9 @@ const handleClassTenth = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="education_medium_10th"
+                          value={classTenthInfoForm.education_medium_10th}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
                             value="english"
@@ -229,6 +303,32 @@ const handleClassTenth = () => {
                         </RadioGroup>
                       </div>
                     </div>
+
+
+                    <div className="mb-1 w-full flex justify-between items-center">
+                      <div className="flex flex-col">
+                        <div className="flex justify-start items-center">
+                       <Checkbox
+                                sx={{
+                                  color: "#AC885A",
+                                  marginLeft:"-0.7rem",
+                                  "&.Mui-checked": {
+                                    color: "#AC885A",
+                                  },
+                                }}
+                                checked={isFieldDisabled}
+                                onChange={handleRadioChange}
+                              />
+                               <label
+                              htmlFor="name"
+                              className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+                            >
+                              Currently Pursuing 
+                            </label>
+                              </div>
+                      </div>
+                    </div>
+
                     <div className="mb-3 w-full flex justify-between items-center">
                       <div className="flex flex-col">
                         <label
@@ -248,6 +348,10 @@ const handleClassTenth = () => {
                                 color: "#AC885A",
                               },
                             }}
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            maxDate={maxDate}
+                            disabled={isFieldDisabled}
                           />
                         </LocalizationProvider>
                       </div>
@@ -260,8 +364,11 @@ const handleClassTenth = () => {
                         </label>
                         <TextField
                           sx={{ width: "220px" }}
-                          id=""
+                          name="parcentage_10th"
+                          value={classTenthInfoForm.parcentage_10th}
+                          onChange={handleChange}
                           placeholder="Please Enter Percentage %"
+                          disabled={isFieldDisabled}
                         />
                       </div>
                     </div>
@@ -276,7 +383,9 @@ const handleClassTenth = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
+                          name="education_mode_10th"
+                          value={classTenthInfoForm.education_mode_10th}
+                          onChange={handleChange}
                         >
                           <FormControlLabel
                             value="regular"
@@ -329,7 +438,7 @@ const handleClassTenth = () => {
                               />
                             ),
                           }}
-                          value={fileName}
+                          value={fileName?.name}
                           disabled
                         />
                         <input

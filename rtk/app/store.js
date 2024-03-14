@@ -43,6 +43,7 @@ import GetCityListReducer from "../features/FurtherEducation/GetCityListSlice";
 import getFilterResultDataReducer from "../features/FurtherEducation/getFilterResultDataSlice"
 import getVideoSessionListDataReducer from "../features/VideoSession/getVideoSessionListDataSlice";
 import getVideoSessionDataByIdReducer from "../features/VideoSession/getVideoSessionDataByIdSlice";
+import addSignUpDataReducer from "../features/LoginForm/addSignUpDataSlice"
 
 const persistConfig = {
   key: "root",
@@ -85,6 +86,7 @@ const reducer = combineReducers({
   getFilterResultData:getFilterResultDataReducer,
   getVideoSessionDataById:getVideoSessionDataByIdReducer,
   getVideoSessionListData:getVideoSessionListDataReducer,
+  addSignUpData:addSignUpDataReducer,
 
 });
 

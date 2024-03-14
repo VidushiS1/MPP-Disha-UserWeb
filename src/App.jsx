@@ -95,7 +95,7 @@ function App() {
             <Route path="/student-below-tenth" element={<BelowTenthForm />} />
             <Route path="/student-class-tenth" element={<ClassTenthForm />} />
             <Route
-              path="/student-class-twekfth"
+              path="/student-class-twelfth"
               element={<ClassTwelfthForm />}
             />
             <Route

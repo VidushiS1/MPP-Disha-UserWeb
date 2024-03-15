@@ -44,7 +44,7 @@ export const getGovJobsListData = createAsyncThunk(
       if (getGovtSectorIds?.length > 0 && getAgnecyIds?.length === 0) {
         response = await axios.post(API_URL + "get-gov-jobs", sectorObj, config);
       } else if (getAgnecyIds?.length > 0 && getGovtSectorIds?.length === 0) {
-        response = await axios.post(API_URL + "get-gov-jobs", agencyObj, config);
+        response = await axios.post(API_URL + "get-gov-jobs-agency", agencyObj, config);
       } else {
         response = await axios.post(API_URL + "get-gov-jobs", allObj, config);
       }

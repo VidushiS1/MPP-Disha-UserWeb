@@ -538,9 +538,12 @@ const handleChangeAgency = (event) => {
 const ClearPvtSectorFilter =()=>{
 setSectorName(getPvtSectorIds);
 }
+
 const ClearGovtSectorFilter =()=>{
-setGovtSectorName([]);
-setAgencyName([]);
+const allIds = getGovSectorList2?.map((item) => item?._id);
+const allAgencyIds = getGovAgencyListData2?.map((item) => item?._id);
+setGovtSectorName(allIds);
+setAgencyName(allAgencyIds);
 }
 
    

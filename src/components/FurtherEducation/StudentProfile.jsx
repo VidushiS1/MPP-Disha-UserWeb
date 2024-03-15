@@ -454,7 +454,7 @@ useEffect(()=>{
                 for="about"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Discipline
+                Discipline<span className="text-red-500">*</span>
               </label>
               <div className="relative inline-block w-full">
                 <ReactSelect
@@ -511,7 +511,7 @@ useEffect(()=>{
                 for="about"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Subject
+                Subject<span className="text-red-500">*</span>
               </label>
               <div className="flex items-center">
                 <ReactSelect
@@ -566,7 +566,7 @@ useEffect(()=>{
                 for="about"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Course
+                Course<span className="text-red-500">*</span>
               </label>
               <div className="flex items-center">
                 <ReactSelect
@@ -686,6 +686,7 @@ useEffect(()=>{
                   options={formattedInstituteManagerList}
                   value={instituteName}
                   onChange={handleInstituteChange}
+                  isDisabled={addSubjectDataForm?.course_name === ""}
                   name="institute_type"
                   placeholder="Select Institute"
                   styles={{

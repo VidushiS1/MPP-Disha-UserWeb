@@ -143,7 +143,7 @@ const ViewJobDetails = () => {
                 <h6 className="text-lg font-bold">Agency</h6>
                 <div className={`border-b-2 border-yellow-700 w-14 mt-1`}></div>
                 <h6 className="mt-2 text-sm font-medium text-neutral-600">
-                  {getGovJobsListDataById2?.job_sector}
+                  {getGovJobsListDataById2?.job_agency}
                 </h6>
               </div>
             </div>

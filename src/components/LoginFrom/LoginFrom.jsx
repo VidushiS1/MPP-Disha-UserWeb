@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/college students.gif";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -94,6 +94,24 @@ const loginDetailsHandler = (e) =>{
       setLoading(false);
     }
   };
+
+
+
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setAuth(true);
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && window.location.pathname === "/login") {
+      window.location.href = "/"; 
+    }
+  }, [auth]);
 
   return (
     <>

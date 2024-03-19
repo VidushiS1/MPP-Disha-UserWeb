@@ -4,7 +4,7 @@ import StadyTree from "../../assets/job-seeker.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField,Checkbox } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField,Checkbox,Select,MenuItem } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -95,13 +95,49 @@ const JobSeekerForm = () => {
 
 
 
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setjobSeekerForm({
-      ...jobSeekerForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name" || name === "school_name_10th" || name === "school_name_12th" || name === "institute_ug" || name === "institute_pg" || name === "subject_12th") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+
+  if (name === "board_10th" || name === "board_12th") {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+    if (!alphabeticPattern.test(value)) {
+        return;
+    }
+}
+
+
+if (name === "course_ug" || name === "course_pg") {
+  const alphabeticPattern = /^[A-Za-z\s.]*$/;
+  if (!alphabeticPattern.test(value)) {
+      return;
+  }
+}
+  
+    if (name === "parcentage" || name === "parcentage_10th" || name === "parcentage_12th" || name === "parcentage_ug" || name === "parcentage_pg") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setjobSeekerForm({
+          ...jobSeekerForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setjobSeekerForm({
+        ...jobSeekerForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+
+
 
   const handleDateChange = (newValue) => {
     setSelectedDate(newValue);
@@ -224,6 +260,9 @@ console.log("jobSeekerForm",jobSeekerForm);
     Navigate("/student-select-qualification");
   };
 
+  const ClassOptions = [{value:"Class 1st"},{value:"Class 2nd"},{value:"Class 3rd"},{value:"Class 4th"},{value:"Class 5th"},{value:"Class 6th"},{value:"Class 7th"},{value:"Class 8th"},{value:"Class 9th"}]
+
+
   return (
     <>
       <div
@@ -341,13 +380,30 @@ console.log("jobSeekerForm",jobSeekerForm);
                           >
                             Class Name
                           </label>
-                          <TextField
+                          {/* <TextField
                             sx={{ width: "228px" }}
                             name="class_name"
                           value={jobSeekerForm.class_name}
                           onChange={handleChange}
                             placeholder="Please Enter Class Name"
-                          />
+                          /> */}
+                           <Select
+        labelId="below-8th-class-name-label"
+        id="below-8th-class-name"
+        name="class_name"
+        value={jobSeekerForm.class_name}
+        onChange={handleChange}
+        placeholder="Please Select Class Name"
+        sx={{ width: "228px" }}
+      >
+        <MenuItem value="">Select Class Name</MenuItem>
+        {
+          ClassOptions.map((item)=>(
+            <MenuItem value={item.value}>{item.value}</MenuItem>
+          ))
+        }
+       
+      </Select>
                         </div>
                         <div className="flex flex-col">
                           <label

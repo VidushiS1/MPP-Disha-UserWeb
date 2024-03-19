@@ -107,14 +107,49 @@ const PostGraduationForm = () => {
   })
 
 
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setclassUgdpInfoForm({
-      ...classUgdpInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name_10th" || name === "school_name_12th" || name === "institute_ug" || name === "institute_pg") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+
+  if (name === "board_10th" || name === "board_12th") {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+    if (!alphabeticPattern.test(value)) {
+        return;
+    }
+}
+
+
+if (name === "course_ug" || name === "course_pg") {
+  const alphabeticPattern = /^[A-Za-z\s.]*$/;
+  if (!alphabeticPattern.test(value)) {
+      return;
+  }
+}
+  
+    if (name === "parcentage_10th" || name === "parcentage_12th" || name === "parcentage_ug" || name === "parcentage_pg") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setclassUgdpInfoForm({
+          ...classUgdpInfoForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setclassUgdpInfoForm({
+        ...classUgdpInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+
+
+
 
   const handleDateChange = (newValue) => {
     setSelectedDate(newValue);
@@ -172,7 +207,6 @@ const PostGraduationForm = () => {
   }, [selectedDate,fileName,selectedDateTwelfth,fileNameUgdp,fileNameUgdp,selectedDateUgdp,selectedDatePg,fileNamePg]);
 
 
-  const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th","education_mode_12th","education_medium_12th","board_12th","school_name_12th","institute_ug","course_ug","education_medium_ug","education_mode_ug"];
 
 
   
@@ -204,6 +238,9 @@ useEffect(()=>{
 
 },[isFieldDisabled,classUgdpInfoForm?.parcentage_pg,classUgdpInfoForm?.passing_year_pg])
 
+
+const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th","parcentage_10th","education_mode_12th","education_medium_12th","board_12th","parcentage_12th","school_name_12th","institute_ug","course_ug","education_medium_ug","education_mode_ug","education_mode_pg","parcentage_ug","education_medium_pg","course_pg","institute_pg"];
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
@@ -219,22 +256,29 @@ const handleSubmit = async (e) => {
       return;
     }
 
+    if (classUgdpInfoForm?.parcentage_10th === "00" || classUgdpInfoForm?.parcentage_12th === "00" || classUgdpInfoForm?.parcentage_ug === "00" ) {
+      toast.error("Please fill the percentage field for both 10th,12th class and graduation", {
+        toastId: customId,
+      });
+      return;
+    }
+
     if (classUgdpInfoForm?.passing_year_10th === "Invalid Date" || classUgdpInfoForm?.passing_year_12th === "Invalid Date" || classUgdpInfoForm?.passing_year_ug === "Invalid Date") {
-      toast.error("Please Select the year of Passing.", {
+      toast.error("Select year of passing for both 10th,12th and graduation", {
         toastId: customId,
       });
       return;
     }
 
     if (classUgdpInfoForm?.pursuing_pg === false && classUgdpInfoForm?.passing_year_pg === "Invalid Date") {
-      toast.error("Please Select the year of Passing.", {
+      toast.error("Select year of passing for post graduation", {
         toastId: customId,
       });
       return;
     }
 
-    if (classUgdpInfoForm?.pursuing_pg === false && classUgdpInfoForm?.parcentage_pg === "") {
-      toast.error("Please fill the percentage field", {
+    if (classUgdpInfoForm?.pursuing_pg === false && (classUgdpInfoForm?.parcentage_pg === "" || classUgdpInfoForm?.parcentage_pg === "00")) {
+      toast.error("Please fill the percentage field for post graduation", {
         toastId: customId,
       });
       return;

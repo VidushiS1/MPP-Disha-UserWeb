@@ -4,7 +4,7 @@ import StadyTree from "../../assets/BelowTenthForm.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField,Select,MenuItem } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -63,12 +63,38 @@ const BelowTenthForm = () => {
 
 
 
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setbelowTenthInfoForm({
+  //     ...belowTenthInfoForm,
+  //     [name]: type === "checkbox" ? checked : value,
+  //   });
+  // };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setbelowTenthInfoForm({
-      ...belowTenthInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+  
+    if (name === "parcentage") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setbelowTenthInfoForm({
+          ...belowTenthInfoForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setbelowTenthInfoForm({
+        ...belowTenthInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
 
 
@@ -130,6 +156,13 @@ const BelowTenthForm = () => {
         });
         return;
       }
+
+      if (belowTenthInfoForm?.parcentage === "00") {
+        toast.error("Please enter the valid percentage", {
+          toastId: customId,
+        });
+        return;
+      }
       const formData = new FormData();
   
       // Append each key-value pair from belowTenthInfoForm to formData
@@ -156,6 +189,9 @@ const BelowTenthForm = () => {
   // const handleBack = () => {
   //   Navigate("/student-select-qualification");
   // };
+
+  const ClassOptions = [{value:"Class 1st"},{value:"Class 2nd"},{value:"Class 3rd"},{value:"Class 4th"},{value:"Class 5th"},{value:"Class 6th"},{value:"Class 7th"},{value:"Class 8th"},{value:"Class 9th"}]
+
 
   return (
     <>
@@ -209,13 +245,30 @@ const BelowTenthForm = () => {
                         >
                           Class Name
                         </label>
-                        <TextField
+                        {/* <TextField
                           sx={{ width: "228px" }}
                           placeholder="Please Enter Class Name"
                           name="class_name"
                           value={belowTenthInfoForm.class_name}
                           onChange={handleChange}
-                        />
+                        /> */}
+                          <Select
+        labelId="below-8th-class-name-label"
+        id="below-8th-class-name"
+        name="class_name"
+                          value={belowTenthInfoForm.class_name}
+                          onChange={handleChange}
+        placeholder="Please Select Class Name"
+        sx={{ width: "252px" }}
+      >
+        <MenuItem value="">Select Class Name</MenuItem>
+        {
+          ClassOptions.map((item)=>(
+            <MenuItem value={item.value}>{item.value}</MenuItem>
+          ))
+        }
+       
+      </Select>
                       </div>
                       <div className="flex flex-col">
                         <label
@@ -317,6 +370,7 @@ const BelowTenthForm = () => {
                           value={belowTenthInfoForm.parcentage}
                           onChange={handleChange}
                           placeholder="Please Enter Percentage %"
+                          inputProps={{ min: "0", max: "100" }}
                         />
                       </div>
                     </div>

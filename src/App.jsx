@@ -1,18 +1,10 @@
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-// import SideNavber from "./components/SideNavbar/SideNavber";
-// import TopNavbar from "./components/TopNavbar/TopNavbar";
-// import LoginFrom from "./components/LoginFrom/LoginFrom";
-// import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Outlet,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 import SideNavber from "./components/SideNavber/SideNavber";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
@@ -23,7 +15,6 @@ import ConfirmPassword from "./components/LoginFrom/ConfirmPassword";
 import TopNavbar from "./components/TopNavbar/TopNavbar";
 import BroadcastScheduledAllCard from "./components/Broadcast/BroadcastScheduledAllCard";
 import ViewBroadcastScheduled from "./components/Broadcast/ViewBroadcastScheduled";
-import PagenotImg from "./assets/404-page-not-foud.gif"
 import PageNotFound from "./components/404ErrorPageNotFound/PageNotFound";
 import ScholarshipAllCard from "./components/Scholarship/ScholarshipAllCard";
 import ViewScholarship from "./components/Scholarship/ViewScholarship";
@@ -32,7 +23,6 @@ import AddCareerAdvice from "./components/CareerAdvice/ViewCareerAdvice";
 import JobManagerAllCardSection from "./components/JobManager/JobManagerAllCardSection";
 import ViewJobDetails from "./components/JobManager/ViewJobDetails";
 import ViewPrivateJobDetails from "./components/JobManager/ViewPrivateJobDetails";
-import bgLogo from "./assets/bgwtaermark4.png";
 import AllVideoSessionCard from "./components/VideoSession/AllVideoSessionCard";
 import EditCareerAdvice from "./components/CareerAdvice/EditCareerAdvice";
 import StudentProfile from "./components/FurtherEducation/StudentProfile";
@@ -50,108 +40,83 @@ import PostGraduationForm from "./components/RegistrationForm/PostGraduationForm
 import JobSeekerForm from "./components/RegistrationForm/JobSeekerForm";
 import HobbiesForm from "./components/RegistrationForm/HobbiesForm";
 
-
 function App() {
-  
-  
-   const PrivateRoute = ({ isAuthenticated, ...props }) => {
-     const token = localStorage.getItem("token");
-     return token ? (
-       <>
-         <SideNavber />
-         <Outlet />
-       </>
-     ) : (
-       <Navigate replace to="/login" />
-     );
-   };
+
+
+  const PrivateRoute = ({ isAuthenticated, ...props }) => {
+    const token = localStorage.getItem("token");
+    return token ? (
+      <>
+        <SideNavber />
+        <Outlet />
+      </>
+    ) : (
+      <Navigate replace to="/login" />
+    );
+  };
 
   return (
-    <>
+    <Router>
       <div className="flex">
-        <Router>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/*" element={<PageNotFound />} />
-            <Route path="/login" element={<LoginFrom />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/forget-password" element={<ForgetPassword />} />
-            <Route path="/confirm-otp" element={<ConfirmOTP />} />
-            <Route path="/confirm-password" element={<ConfirmPassword />} />
-
+        <ScrollToTop />
+        <Routes>
+          <Route path="/*" element={<PageNotFound />} />
+          <Route path="/login" element={ <LoginFrom />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
+          <Route path="/confirm-otp" element={<ConfirmOTP />} />
+          <Route path="/confirm-password" element={<ConfirmPassword />} />
+          <Route
+            path="/student-registration"
+            element={<StudentRegistrationForm />}
+          />
+          <Route
+            path="/student-registration-information-form"
+            element={<RegistrationInformationForm />}
+          />
+          <Route
+            path="/student-select-qualification"
+            element={<QualificationForm />}
+          />
+          <Route path="/student-below-eighth" element={<BelowEighthForm />} />
+          <Route path="/student-below-tenth" element={<BelowTenthForm />} />
+          <Route path="/student-class-tenth" element={<ClassTenthForm />} />
+          <Route
+            path="/student-class-twelfth"
+            element={<ClassTwelfthForm />}
+          />
+          <Route
+            path="/student-under-graduation-diploma"
+            element={<UnderGraduationDiplomaForm />}
+          />
+          <Route
+            path="/student-under-graduation"
+            element={<UnderGraduationForm />}
+          />
+          <Route
+            path="/student-post-graduation"
+            element={<PostGraduationForm />}
+          />
+          <Route path="/student-job-seeker" element={<JobSeekerForm />} />
+          <Route path="/student-hobbies" element={<HobbiesForm />} />
+          <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
             <Route
-              path="/student-registration"
-              element={<StudentRegistrationForm />}
-            />
-            <Route
-              path="/student-registration-information-form"
-              element={<RegistrationInformationForm />}
-            />
-            <Route
-              path="/student-select-qualification"
-              element={<QualificationForm />}
-            />
-            <Route path="/student-below-eighth" element={<BelowEighthForm />} />
-            <Route path="/student-below-tenth" element={<BelowTenthForm />} />
-            <Route path="/student-class-tenth" element={<ClassTenthForm />} />
-            <Route
-              path="/student-class-twelfth"
-              element={<ClassTwelfthForm />}
-            />
-            <Route
-              path="/student-under-graduation-diploma"
-              element={<UnderGraduationDiplomaForm />}
-            />
-            <Route
-              path="/student-under-graduation"
-              element={<UnderGraduationForm />}
-            />
-            <Route
-              path="/student-post-graduation"
-              element={<PostGraduationForm />}
-            />
-            <Route path="/student-job-seeker" element={<JobSeekerForm />} />
-            <Route path="/student-hobbies" element={<HobbiesForm />} />
-
-            {/* <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <div className="h-screen flex flex-col w-full">
-                      <div className="">
-                        <TopNavbar />
-                      </div>
-                      <div className="flex-1 p-7 scrollable-content second-main-container-contant-section ">
-                        <h1 className="text-2xl font-semibold">
-                          Student profile
-                        </h1>
-                      </div>
+              path="/"
+              element={
+                <>
+                  <div className="h-screen flex flex-col w-full">
+                    <div className="">
+                      <TopNavbar />
                     </div>
-                  </>
-                }
-              />
-            </Route> */}
-
-            <Route path="/" element={<PrivateRoute isAuthenticated={""} />}>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <div className="h-screen flex flex-col w-full">
-                      <div className="">
-                        <TopNavbar />
-                      </div>
-                      <div className="flex-1 p-7 scrollable-content ">
-                        <StudentProfile />
-                      </div>
+                    <div className="flex-1 p-7 scrollable-content ">
+                      <StudentProfile />
                     </div>
-                  </>
-                }
-              />
-            </Route>
-
-            <Route
+                  </div>
+                </>
+              }
+            />
+          </Route>
+          <Route
               path="/broadcast-scheduled-all-card"
               element={<PrivateRoute isAuthenticated={""} />}
             >
@@ -373,10 +338,9 @@ function App() {
                 }
               />
             </Route>
-          </Routes>
-        </Router>
+        </Routes>
       </div>
-    </>
+    </Router>
   );
 }
 

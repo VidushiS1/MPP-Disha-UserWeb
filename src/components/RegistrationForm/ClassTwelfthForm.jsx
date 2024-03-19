@@ -78,14 +78,40 @@ const ClassTwelfthForm = () => {
   })
 
 
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setclassTwelfthInfoForm({
-      ...classTwelfthInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name_10th" || name === "school_name_12th") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+
+  if (name === "board_10th" || name === "board_12th") {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+    if (!alphabeticPattern.test(value)) {
+        return;
+    }
+}
+  
+    if (name === "parcentage_10th" || name === "parcentage_12th") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setclassTwelfthInfoForm({
+          ...classTwelfthInfoForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setclassTwelfthInfoForm({
+        ...classTwelfthInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+
+
 
   const handleDateChange = (newValue) => {
     setSelectedDate(newValue);
@@ -170,6 +196,14 @@ const handleSubmit = async (e) => {
       return;
     }
 
+
+    if (classTwelfthInfoForm?.parcentage_10th === "00") {
+      toast.error("Please fill the percentage 10th field", {
+        toastId: customId,
+      });
+      return;
+    }
+
     if (classTwelfthInfoForm?.pursuing_12th === false && classTwelfthInfoForm?.passing_year_12th === "Invalid Date") {
       toast.error("Please Select the 12th year of Passing.", {
         toastId: customId,
@@ -177,7 +211,7 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    if (classTwelfthInfoForm?.pursuing_12th === false && classTwelfthInfoForm?.parcentage_12th === "") {
+    if (classTwelfthInfoForm?.pursuing_12th === false && (classTwelfthInfoForm?.parcentage_12th === "" || classTwelfthInfoForm?.parcentage_12th === "00")) {
       toast.error("Please fill the percentage 12th field", {
         toastId: customId,
       });

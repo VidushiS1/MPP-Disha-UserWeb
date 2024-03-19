@@ -4,7 +4,7 @@ import StadyTree from "../../assets/BelowEighthForm.gif";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField,Select,MenuItem } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
 import { toast } from "react-toastify";
@@ -66,11 +66,32 @@ const BelowEighthForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setBelowEightInfoForm({
-      ...belowEightInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "below_8th_school_name") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+  
+  
+  
+  if (name === "below_8th_parcentage") {
+    let valueP = parseInt(value, 10);
+          if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+      setBelowEightInfoForm({
+        ...belowEightInfoForm,
+        [name]: valueP.toString().padStart(2, "0")
+      });
+    }
+  } else {
+      setBelowEightInfoForm({
+        ...belowEightInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+  
 
 
 
@@ -130,8 +151,15 @@ const BelowEighthForm = () => {
         return;
       }
   
-      if (belowEightInfoForm?.dob === "Invalid Date") {
+      if (belowEightInfoForm?.below_8th_passing_year === "Invalid Date") {
         toast.error("Please Select the year of Passing.", {
+          toastId: customId,
+        });
+        return;
+      }
+
+      if (belowEightInfoForm?.below_8th_parcentage === "00") {
+        toast.error("Please enter the valid percentage", {
           toastId: customId,
         });
         return;
@@ -154,6 +182,9 @@ const BelowEighthForm = () => {
 
 
   console.log("belowEightInfoForm",belowEightInfoForm);
+
+  const ClassOptions = [{value:"Class 1st"},{value:"Class 2nd"},{value:"Class 3rd"},{value:"Class 4th"},{value:"Class 5th"},{value:"Class 6th"},{value:"Class 7th"}]
+
   return (
     <>
       <div
@@ -206,13 +237,30 @@ const BelowEighthForm = () => {
                         >
                           Class Name
                         </label>
-                        <TextField
+                        {/* <TextField
                           sx={{ width: "228px" }}
                           name="below_8th_class_name"
                           value={belowEightInfoForm.below_8th_class_name}
                           onChange={handleChange}
                           placeholder="Please Enter Class Name"
-                        />
+                        /> */}
+                         <Select
+        labelId="below-8th-class-name-label"
+        id="below-8th-class-name"
+        name="below_8th_class_name"
+        value={belowEightInfoForm.below_8th_class_name}
+        onChange={handleChange}
+        placeholder="Please Select Class Name"
+        sx={{ width: "252px" }}
+      >
+        <MenuItem value="">Select Class Name</MenuItem>
+        {
+          ClassOptions.map((item)=>(
+            <MenuItem value={item.value}>{item.value}</MenuItem>
+          ))
+        }
+       
+      </Select>
                       </div>
                       <div className="flex flex-col">
                         <label
@@ -298,6 +346,7 @@ const BelowEighthForm = () => {
                             value={selectedDate}
                             onChange={handleDateChange}
                             maxDate={maxDate}
+                             
                           />
                         </LocalizationProvider>
                       </div>
@@ -314,6 +363,7 @@ const BelowEighthForm = () => {
                           value={belowEightInfoForm.below_8th_parcentage}
                           onChange={handleChange}
                           placeholder="Please Enter Percentage %"
+                          inputProps={{ min: "0", max: "100" }}
                         />
                       </div>
                     </div>

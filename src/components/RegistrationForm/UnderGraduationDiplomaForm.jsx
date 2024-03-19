@@ -93,14 +93,44 @@ const UnderGraduationDiplomaForm = () => {
     parcentage_ug_dp:""
   })
 
-
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setclassUgdpInfoForm({
-      ...classUgdpInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name_10th" || name === "school_name_12th" || name === "institute_ug_dp") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+
+  if (name === "board_10th" || name === "board_12th") {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+    if (!alphabeticPattern.test(value)) {
+        return;
+    }
+}
+
+if (name === "course_ug_dp") {
+  const alphabeticPattern = /^[A-Za-z\s.]*$/;
+  if (!alphabeticPattern.test(value)) {
+      return;
+  }
+}
+  
+    if (name === "parcentage_10th" || name === "parcentage_12th" || name === "parcentage_ug_dp") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setclassUgdpInfoForm({
+          ...classUgdpInfoForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setclassUgdpInfoForm({
+        ...classUgdpInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
 
   const handleDateChange = (newValue) => {
@@ -146,7 +176,6 @@ const UnderGraduationDiplomaForm = () => {
   }, [selectedDate,fileName,selectedDateTwelfth,fileNameUgdp,fileNameUgdp,selectedDateUgdp]);
 
 
-  const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th","education_mode_12th","education_medium_12th","board_12th","school_name_12th","institute_ug_dp","course_ug_dp","education_medium_ug_dp","education_mode_ug_dp"];
 
 
   
@@ -178,6 +207,10 @@ useEffect(()=>{
 
 },[isFieldDisabled,classUgdpInfoForm?.parcentage_ug_dp,classUgdpInfoForm?.passing_year_ug_dp])
 
+
+const requiredField = ["student_id","education_mode_10th","education_medium_10th","board_10th","school_name_10th","education_mode_12th","education_medium_12th","board_12th","school_name_12th","institute_ug_dp","course_ug_dp","education_medium_ug_dp","education_mode_ug_dp","parcentage_10th","parcentage_12th"];
+
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
@@ -194,21 +227,28 @@ const handleSubmit = async (e) => {
     }
 
     if (classUgdpInfoForm?.passing_year_10th === "Invalid Date" || classUgdpInfoForm?.passing_year_12th === "Invalid Date") {
-      toast.error("Please Select the year of Passing.", {
+      toast.error("Select year of passing for both 10th and 12th", {
+        toastId: customId,
+      });
+      return;
+    }
+
+    if (classUgdpInfoForm?.parcentage_10th === "00" || classUgdpInfoForm?.parcentage_12th === "00" ) {
+      toast.error("Please fill the percentage field for both 10th and 12th class", {
         toastId: customId,
       });
       return;
     }
 
     if (classUgdpInfoForm?.pursuing_ug_dp === false && classUgdpInfoForm?.passing_year_ug_dp === "Invalid Date") {
-      toast.error("Please Select the year of Passing.", {
+      toast.error("Please Select the year of passing for Ug diploma.", {
         toastId: customId,
       });
       return;
     }
 
-    if (classUgdpInfoForm?.pursuing_ug_dp === false && classUgdpInfoForm?.parcentage_ug_dp === "") {
-      toast.error("Please fill the percentage field", {
+    if (classUgdpInfoForm?.pursuing_ug_dp === false && (classUgdpInfoForm?.parcentage_ug_dp === "" || classUgdpInfoForm?.parcentage_ug_dp === "00")) {
+      toast.error("Please fill the percentage field in Ug diploma", {
         toastId: customId,
       });
       return;

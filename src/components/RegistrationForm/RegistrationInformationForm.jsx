@@ -220,7 +220,7 @@ const handleSubmit = async (e) => {
                         >
                           Date of Birth
                         </label>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} >
                           <DatePicker
                             sx={{
                               "& .MuiInputBase-root": {
@@ -233,6 +233,7 @@ const handleSubmit = async (e) => {
                             value={selectedDate}
                             onChange={handleDateChange}
                             maxDate={maxDate}
+                           
                           />
                         </LocalizationProvider>
                       </div>

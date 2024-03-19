@@ -65,13 +65,43 @@ const handleClassTenth = () => {
 
 
 
+
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setclassTenthInfoForm({
-      ...classTenthInfoForm,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "school_name_10th") {
+      const alphanumericPattern = /^[A-Za-z0-9\s.,]*$/; 
+      if (!alphanumericPattern.test(value)) {
+          return;
+      }
+  }
+
+  if (name === "board_10th") {
+    const alphabeticPattern = /^[A-Za-z\s]*$/;
+    if (!alphabeticPattern.test(value)) {
+        return;
+    }
+}
+  
+    if (name === "parcentage_10th") {
+      let valueP = parseInt(value, 10);
+            if (!isNaN(valueP) && valueP >= 0 && valueP <= 100) {
+        setclassTenthInfoForm({
+          ...classTenthInfoForm,
+          [name]: valueP.toString().padStart(2, "0")
+        });
+      }
+    } else {
+      setclassTenthInfoForm({
+        ...classTenthInfoForm,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+
+
+
 
   const handleDateChange = (newValue) => {
     setSelectedDate(newValue);
@@ -122,12 +152,20 @@ const handleClassTenth = () => {
         return;
       }
   
-      if (classTenthInfoForm?.pursuing_10th === false && classTenthInfoForm?.parcentage_10th === "") {
+      if (classTenthInfoForm?.pursuing_10th === false && (classTenthInfoForm?.parcentage_10th === "" || classTenthInfoForm?.parcentage_10th === "00")) {
         toast.error("Please fill the percentage 10th field", {
           toastId: customId,
         });
         return;
       }
+
+      // if (classTenthInfoForm?.below_8th_parcentage === "00") {
+      //   toast.error("Please enter the valid percentage", {
+      //     toastId: customId,
+      //   });
+      //   return;
+      // }
+
 
       const formData = new FormData();
   

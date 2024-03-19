@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/ClassTwelfthForm.gif";
-import InputAdornment from "@mui/material/InputAdornment";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Button, CircularProgress, IconButton, TextField,Checkbox } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
@@ -238,9 +235,6 @@ const handleSubmit = async (e) => {
   }
 };
 
-
-
-
   const handleBack = () => {
     Navigate("/student-select-qualification");
   };
@@ -263,7 +257,7 @@ const handleSubmit = async (e) => {
               style={{ height: "100vh" }}
             >
               <div className="login-form-layout-main ">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center" style={{marginLeft:"1rem"}}>
                   <IconButton
                     sx={{
                       background: "#AC885A",
@@ -279,10 +273,10 @@ const handleSubmit = async (e) => {
                   </IconButton>
 
                   <h1
-                    className="text-center text-xl font-bold text-blue-900 "
+                    className="text-center text-xl font-bold text-blue-900"
                     style={{ color: "#264796" }}
                   >
-                    Fill Form For Class 10th and 12th
+                    Class 10th and 12th
                   </h1>
 
                   <img src={Logo} alt="logo" className="h-20 " />
@@ -387,6 +381,7 @@ const handleSubmit = async (e) => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width: "228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
@@ -406,7 +401,7 @@ const handleSubmit = async (e) => {
                             Percentage %
                           </label>
                           <TextField
-                            sx={{ width: "220px" }}
+                              sx={{ width: "228px" }}
                             name="parcentage_10th"
                             value={classTwelfthInfoForm.parcentage_10th}
                             onChange={handleChange}
@@ -615,6 +610,7 @@ const handleSubmit = async (e) => {
                               sx={{
                                 "& .MuiInputBase-root": {
                                   borderColor: "#AC885A",
+                                  width: "228px"
                                 },
                                 "& .MuiSvgIcon-root": {
                                   color: "#AC885A",
@@ -635,7 +631,7 @@ const handleSubmit = async (e) => {
                             Percentage %
                           </label>
                           <TextField
-                            sx={{ width: "220px" }}
+                            sx={{ width: "228px" }}
                             name="parcentage_12th"
                             value={classTwelfthInfoForm.parcentage_12th}
                             onChange={handleChange}

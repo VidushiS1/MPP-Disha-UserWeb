@@ -329,7 +329,7 @@ const hobbyObj = {
                     className="text-center text-xl font-bold text-blue-900 "
                     style={{ color: "#264796" }}
                   >
-                    What Are Your Interests
+                    What are your interests?
                   </h1>
 
                   <img src={Logo} alt="logo" className="h-20 " />
@@ -338,8 +338,8 @@ const hobbyObj = {
                   <div className="buttom-loginform-area ">
                     <>
                       <div className="flex justify-center items-center mb-6 mt-3">
-                        <h1 className="text-center text-lg font-bold text-slate-600 ">
-                          Please Select Any Three
+                        <h1 className="text-center text-lg font-bold text-slate-600 ml-[-2rem]">
+                          Please select any three hobbies
                         </h1>
                       </div>
                     </>

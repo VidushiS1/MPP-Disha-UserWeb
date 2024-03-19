@@ -1,9 +1,6 @@
 import React, { useState,useEffect } from "react";
 import Logo from "../../assets/drwerdishaicon.png";
 import StadyTree from "../../assets/job-seeker.gif";
-import InputAdornment from "@mui/material/InputAdornment";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Button, CircularProgress, IconButton, TextField,Checkbox,Select,MenuItem } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { loginFormData } from "../../../rtk/features/LoginForm/LoginSlice";
